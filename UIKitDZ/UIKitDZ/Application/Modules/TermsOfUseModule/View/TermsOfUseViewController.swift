@@ -25,8 +25,11 @@ final class TermsOfUseViewController: UIViewController {
 
     private lazy var mainLabel: UILabel = {
         let label = UILabel()
-        label.font = .myFont(fontName: Constants.verdanaBoldFont, fontSize: 20)
         label.textAlignment = .left
+        label.font = .myFont(
+            fontName: Constants.verdanaBoldFont,
+            fontSize: 20
+        )
         return label
     }()
 
@@ -36,7 +39,10 @@ final class TermsOfUseViewController: UIViewController {
         textView.textAlignment = .left
         textView.showsVerticalScrollIndicator = false
         textView.isEditable = false
-        textView.font = .myFont(fontName: Constants.verdanaFont, fontSize: 14)
+        textView.font = .myFont(
+            fontName: Constants.verdanaFont,
+            fontSize: 14
+        )
         return textView
     }()
 
@@ -45,7 +51,11 @@ final class TermsOfUseViewController: UIViewController {
         button.setImage(UIImage(systemName: Constants.xButtonImageName), for: .normal)
         button.contentMode = .scaleAspectFill
         button.tintColor = .black
-        button.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+        button.addTarget(
+            self,
+            action: #selector(cancelTapped),
+            for: .touchUpInside
+        )
         return button
     }()
 
@@ -57,44 +67,26 @@ final class TermsOfUseViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         setupSubviews()
-        setupMainLabelConstraints()
-        setupMainTextViewConstraints()
-        setupXbuttonConstraints()
+        configureSubviews()
     }
 
     // MARK: - Private Methodes
 
     private func setupSubviews() {
-        view.addSubviews([mainLabel, mainTextView, xButton], prepareForAutolayout: true)
+        view.addSubviews([
+            mainLabel,
+            mainTextView,
+            xButton
+        ])
+        view.backgroundColor = .white
         presenter?.setLabelTexts()
     }
 
-    private func setupMainLabelConstraints() {
-        NSLayoutConstraint.activate([
-            mainLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 25),
-            mainLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 45),
-            mainLabel.heightAnchor.constraint(equalToConstant: 20)
-        ])
-    }
-
-    private func setupMainTextViewConstraints() {
-        NSLayoutConstraint.activate([
-            mainTextView.leadingAnchor.constraint(equalTo: mainLabel.leadingAnchor),
-            mainTextView.topAnchor.constraint(equalTo: mainLabel.bottomAnchor),
-            mainTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -25),
-            mainTextView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
-
-    private func setupXbuttonConstraints() {
-        NSLayoutConstraint.activate([
-            xButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 15),
-            xButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
-            xButton.widthAnchor.constraint(equalToConstant: 24),
-            xButton.heightAnchor.constraint(equalToConstant: 24)
-        ])
+    private func configureSubviews() {
+        configureMainLabelConstraints()
+        configureMainTextViewConstraints()
+        configureXbuttonConstraints()
     }
 
     @objc private func cancelTapped() {
@@ -112,5 +104,61 @@ extension TermsOfUseViewController: TermsOfUseViewControllerProtocol {
     func setLabelText(info: TermsOfUse) {
         mainLabel.text = info.title
         mainTextView.text = info.text
+    }
+}
+
+/// Расширение для установки расположений и размеров UI элементов
+extension TermsOfUseViewController {
+    private func configureMainLabelConstraints() {
+        NSLayoutConstraint.activate([
+            mainLabel.leadingAnchor.constraint(
+                equalTo: view.leadingAnchor,
+                constant: 25
+            ),
+            mainLabel.topAnchor.constraint(
+                equalTo: view.topAnchor,
+                constant: 45
+            ),
+            mainLabel.heightAnchor.constraint(
+                equalToConstant: 20
+            )
+        ])
+    }
+
+    private func configureMainTextViewConstraints() {
+        NSLayoutConstraint.activate([
+            mainTextView.leadingAnchor.constraint(
+                equalTo: mainLabel.leadingAnchor
+            ),
+            mainTextView.topAnchor.constraint(
+                equalTo: mainLabel.bottomAnchor
+            ),
+            mainTextView.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -25
+            ),
+            mainTextView.bottomAnchor.constraint(
+                equalTo: view.bottomAnchor
+            )
+        ])
+    }
+
+    private func configureXbuttonConstraints() {
+        NSLayoutConstraint.activate([
+            xButton.topAnchor.constraint(
+                equalTo: view.topAnchor,
+                constant: 15
+            ),
+            xButton.trailingAnchor.constraint(
+                equalTo: view.trailingAnchor,
+                constant: -10
+            ),
+            xButton.widthAnchor.constraint(
+                equalToConstant: 24
+            ),
+            xButton.heightAnchor.constraint(
+                equalToConstant: 24
+            )
+        ])
     }
 }
