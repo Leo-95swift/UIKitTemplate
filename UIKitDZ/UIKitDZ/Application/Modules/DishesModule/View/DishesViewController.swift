@@ -32,6 +32,11 @@ final class DishesViewController: UIViewController {
         }
 
         enum Texts {
+            static let txt = "navigations.txt"
+            static let content = """
+            Пользователь открыл Экран блюд -\n
+            Пользовать перешел на Экран со списком рецептов из
+            """
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
             static let searchBarPlaceholder = "Search recipes"
@@ -41,6 +46,20 @@ final class DishesViewController: UIViewController {
             static let messageLabel = "Add interesting recipes to make ordering products\nconvenient"
         }
     }
+
+    let categoriesMap: [String: String] = [
+        "Salad": "Салатов",
+        "Soup": "Супов",
+        "Chicken": "Курицы",
+        "Meat": "Мяса",
+        "Fish": "Рыбы",
+        "SideDish": "Гарниров",
+        "Drinks": "Напитков",
+        "Pancake": "Блинов",
+        "Desserts": "Десертов"
+    ]
+
+    let fileManager = FileManager.default
 
     // MARK: - Visual Components
 
@@ -91,6 +110,7 @@ final class DishesViewController: UIViewController {
     // MARK: - Public Properties
 
     var presenter: DishesPresenterProtocol?
+    var fileManagerService: FileManagerService?
 
     // MARK: - Private Properties
 
@@ -125,6 +145,33 @@ final class DishesViewController: UIViewController {
         setupColoriesSortingItem()
         setupTimeSortingItem()
         setupSortingItemsAction()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: makeContent(
+                from: Constants.Texts.content,
+                category: category
+            )
+        )
+    }
+
+    private func makeContent(
+        from startContent: String,
+        category: Category?
+    ) -> String {
+        let resultCategoryName = category
+            .flatMap { categoriesMap[$0.categoryName] } ?? ""
+        let result = startContent + (
+            resultCategoryName.isEmpty
+                ? ""
+                : " \(resultCategoryName)"
+        )
+
+        return result
     }
 
     override func viewDidAppear(_ animated: Bool) {

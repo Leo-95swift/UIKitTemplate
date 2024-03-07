@@ -32,8 +32,10 @@ final class AppBuilder {
 
     func makeRecipesModule(coordinator: RecipesCoordinator) -> RecipesViewController {
         let view = RecipesViewController()
+        let service = FileManagerService()
         let recipesPresenter = RecipesPresenter(view: view, coordinator: coordinator)
         view.presenter = recipesPresenter
+        view.fileManagerService = service
         view.tabBarItem = UITabBarItem(
             title: Constants.Titles.recipes,
             image: UIImage(named: Constants.Images.recipes),
@@ -47,12 +49,14 @@ final class AppBuilder {
         data: Category
     ) -> DishesViewController {
         let view = DishesViewController()
+        let service = FileManagerService()
         let dishesPresenter = DishesPresenter(
             view: view,
             coordinator: coordinator,
             data: data
         )
         view.presenter = dishesPresenter
+        view.fileManagerService = service
         return view
     }
 
@@ -61,19 +65,23 @@ final class AppBuilder {
         data: Dish
     ) -> DishesDetailViewController {
         let view = DishesDetailViewController()
+        let service = FileManagerService()
         let dishesDetailPresenter = DishesDetailPresenter(
             view: view,
             coordinator: coordinator,
             data: data
         )
         view.presenter = dishesDetailPresenter
+        view.fileManagerService = service
         return view
     }
 
     func makeFavoritesModule(coordinator: FavoritesCoordinator) -> FavoritesViewController {
         let view = FavoritesViewController()
+        let service = FileManagerService()
         let favoritesPresenter = FavoritesPresenter(view: view, coordinator: coordinator)
         view.presenter = favoritesPresenter
+        view.fileManagerService = service
         view.tabBarItem = UITabBarItem(
             title: Constants.Titles.favorites,
             image: UIImage(named: Constants.Images.favorites),
@@ -84,8 +92,10 @@ final class AppBuilder {
 
     func makeProfileModule(coordinator: ProfileCoordinator) -> ProfileViewController {
         let view = ProfileViewController()
+        let service = FileManagerService()
         let profilePresenter = ProfilePresenter(view: view, coordinator: coordinator)
         view.presenter = profilePresenter
+        view.fileManagerService = service
         view.tabBarItem = UITabBarItem(
             title: Constants.Titles.profile,
             image: UIImage(named: Constants.Images.profile),

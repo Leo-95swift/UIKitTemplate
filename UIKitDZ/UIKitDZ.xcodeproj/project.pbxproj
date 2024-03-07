@@ -28,6 +28,12 @@
 		0124FA4C2B8DC281008BCA1E /* AuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0124FA4B2B8DC281008BCA1E /* AuthCoordinator.swift */; };
 		0124FA4E2B8DC346008BCA1E /* AuthPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0124FA4D2B8DC346008BCA1E /* AuthPresenter.swift */; };
 		0124FA512B8DC7AE008BCA1E /* Builder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0124FA502B8DC7AE008BCA1E /* Builder.swift */; };
+		012777562B99DFAC00FFB55E /* Caretaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777552B99DFAC00FFB55E /* Caretaker.swift */; };
+		012777582B99E06500FFB55E /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777572B99E06500FFB55E /* UserData.swift */; };
+		0127775A2B99E1CC00FFB55E /* UserDataMemento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777592B99E1CC00FFB55E /* UserDataMemento.swift */; };
+		0127775C2B99E4F500FFB55E /* kjnlnj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0127775B2B99E4F500FFB55E /* kjnlnj.swift */; };
+		0127775E2B99EBC700FFB55E /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0127775D2B99EBC700FFB55E /* Login.swift */; };
+		012777622B9A287800FFB55E /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777612B9A287800FFB55E /* FileManagerService.swift */; };
 		0137AFC92B773DF10050C230 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0137AFC82B773DF10050C230 /* AppDelegate.swift */; };
 		0137AFCB2B773DF10050C230 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0137AFCA2B773DF10050C230 /* SceneDelegate.swift */; };
 		0137AFCD2B773DF10050C230 /* AuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0137AFCC2B773DF10050C230 /* AuthViewController.swift */; };
@@ -97,6 +103,13 @@
 		0124FA4B2B8DC281008BCA1E /* AuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthCoordinator.swift; sourceTree = "<group>"; };
 		0124FA4D2B8DC346008BCA1E /* AuthPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthPresenter.swift; sourceTree = "<group>"; };
 		0124FA502B8DC7AE008BCA1E /* Builder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Builder.swift; sourceTree = "<group>"; };
+		012777552B99DFAC00FFB55E /* Caretaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caretaker.swift; sourceTree = "<group>"; };
+		012777572B99E06500FFB55E /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
+		012777592B99E1CC00FFB55E /* UserDataMemento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataMemento.swift; sourceTree = "<group>"; };
+		0127775B2B99E4F500FFB55E /* kjnlnj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kjnlnj.swift; sourceTree = "<group>"; };
+		0127775D2B99EBC700FFB55E /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		0127775F2B9A221300FFB55E /* UIKitDZ.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UIKitDZ.entitlements; sourceTree = "<group>"; };
+		012777612B9A287800FFB55E /* FileManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerService.swift; sourceTree = "<group>"; };
 		0137AFC52B773DF10050C230 /* UIKitDZ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UIKitDZ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0137AFC82B773DF10050C230 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0137AFCA2B773DF10050C230 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -407,6 +420,26 @@
 			path = Builder;
 			sourceTree = "<group>";
 		};
+		012777542B99DF6400FFB55E /* CaretakerService */ = {
+			isa = PBXGroup;
+			children = (
+				012777552B99DFAC00FFB55E /* Caretaker.swift */,
+				012777572B99E06500FFB55E /* UserData.swift */,
+				012777592B99E1CC00FFB55E /* UserDataMemento.swift */,
+				0127775B2B99E4F500FFB55E /* kjnlnj.swift */,
+				0127775D2B99EBC700FFB55E /* Login.swift */,
+			);
+			path = CaretakerService;
+			sourceTree = "<group>";
+		};
+		012777602B9A285800FFB55E /* FileManagerService */ = {
+			isa = PBXGroup;
+			children = (
+				012777612B9A287800FFB55E /* FileManagerService.swift */,
+			);
+			path = FileManagerService;
+			sourceTree = "<group>";
+		};
 		0137AFBC2B773DF00050C230 = {
 			isa = PBXGroup;
 			children = (
@@ -426,9 +459,12 @@
 		0137AFC72B773DF10050C230 /* UIKitDZ */ = {
 			isa = PBXGroup;
 			children = (
+				0127775F2B9A221300FFB55E /* UIKitDZ.entitlements */,
 				0124F9A32B8B8010008BCA1E /* Application */,
 				0124FA4F2B8DC79B008BCA1E /* Builder */,
 				0124FA3A2B8DB810008BCA1E /* Coordinators */,
+				012777542B99DF6400FFB55E /* CaretakerService */,
+				012777602B9A285800FFB55E /* FileManagerService */,
 				0124F9C62B8CBA17008BCA1E /* Modules */,
 				0124F9D02B8CBBAB008BCA1E /* Extension */,
 				0124F9D32B8CBC10008BCA1E /* Helpers */,
@@ -727,9 +763,11 @@
 				0137AFCD2B773DF10050C230 /* AuthViewController.swift in Sources */,
 				8BB945952B96A1F3005B9CCB /* UIColor+Extension.swift in Sources */,
 				0124FA3C2B8DB840008BCA1E /* BaseCoordinator.swift in Sources */,
+				0127775A2B99E1CC00FFB55E /* UserDataMemento.swift in Sources */,
 				0124F9D52B8CBC27008BCA1E /* PrepareForAutolayout.swift in Sources */,
 				0124FA4C2B8DC281008BCA1E /* AuthCoordinator.swift in Sources */,
 				0124FA462B8DBC6E008BCA1E /* RecipesCoordinator.swift in Sources */,
+				012777582B99E06500FFB55E /* UserData.swift in Sources */,
 				0124F9E82B8CC168008BCA1E /* FavoritesViewController.swift in Sources */,
 				01C8DD582B90B14500356868 /* DishesViewController.swift in Sources */,
 				0137AFC92B773DF10050C230 /* AppDelegate.swift in Sources */,
@@ -737,6 +775,7 @@
 				8B710BC22B90D069001701A4 /* DishesTableViewCell.swift in Sources */,
 				8BA9303F2B940EF6009351AC /* DetailRecipeTableViewCell.swift in Sources */,
 				0124FA4A2B8DBFF9008BCA1E /* ProfileCoordinator.swift in Sources */,
+				012777562B99DFAC00FFB55E /* Caretaker.swift in Sources */,
 				8B5CBDA12B91729300999F62 /* SortingStates.swift in Sources */,
 				8B04BF9F2B8ECB5A005301C9 /* ProfileOption.swift in Sources */,
 				8B04BF9D2B8EC9A8005301C9 /* OptionsTableViewCell.swift in Sources */,
@@ -749,6 +788,7 @@
 				8BD1F8E22B9030200053F19B /* BonusStorage.swift in Sources */,
 				01C8DD752B9467CA00356868 /* MakeMessageStackView.swift in Sources */,
 				8BB945992B96BE50005B9CCB /* InfoStates.swift in Sources */,
+				0127775E2B99EBC700FFB55E /* Login.swift in Sources */,
 				8B04BF992B8E111E005301C9 /* ProfileStorage.swift in Sources */,
 				01C8DD502B909F6000356868 /* CategoriesStorage.swift in Sources */,
 				8BD1F8E02B90300A0053F19B /* BonusInfo.swift in Sources */,
@@ -757,6 +797,7 @@
 				8BD1F8E52B9041220053F19B /* TypealisHandler.swift in Sources */,
 				01C8DD562B90B0EA00356868 /* DishesPresenter.swift in Sources */,
 				8B04BFA52B8F0ABB005301C9 /* TermsOfUsePresenter.swift in Sources */,
+				012777622B9A287800FFB55E /* FileManagerService.swift in Sources */,
 				8B04BFAA2B8F0C46005301C9 /* TermsOfUseStorage.swift in Sources */,
 				01C8DD4E2B909DC000356868 /* Nutrients.swift in Sources */,
 				8BB945972B96A49F005B9CCB /* UIFont+Extension.swift in Sources */,
@@ -767,6 +808,7 @@
 				01F4410E2B96FF8300010CEC /* Validation.swift in Sources */,
 				8BB9459D2B96BFEA005B9CCB /* ShimmerTableViewCell.swift in Sources */,
 				8BA9303A2B940ECE009351AC /* DishImageTableViewCell.swift in Sources */,
+				0127775C2B99E4F500FFB55E /* kjnlnj.swift in Sources */,
 				8B04BFA82B8F0C1F005301C9 /* TermsOfUse.swift in Sources */,
 				8BB9459B2B96BFBD005B9CCB /* Shimmerable.swift in Sources */,
 				0124F9EC2B8CC1BC008BCA1E /* RecipesViewController.swift in Sources */,
@@ -921,8 +963,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UIKitDZ/UIKitDZ.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UIKitDZ/SupportingFiles/Info.plist;
@@ -948,8 +992,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = UIKitDZ/UIKitDZ.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UIKitDZ/SupportingFiles/Info.plist;

@@ -27,6 +27,10 @@ final class DishesDetailViewController: UIViewController {
         }
 
         enum Texts {
+            static let navigationTxt = "navigations.txt"
+            static let sharingTxt = "sharings.txt"
+            static let navigationContent = "Пользователь открыл Экран деталей блюд"
+            static let sharingContent = "Пользователь поделился рецептом из"
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
             static let alertTitle = "Функционал в разработке"
@@ -70,6 +74,7 @@ final class DishesDetailViewController: UIViewController {
     // MARK: - Public Properties
 
     var presenter: DishesDetailPresenterProtocol?
+    var fileManagerService: FileManagerService?
 
     // MARK: - Private Properties
 
@@ -84,6 +89,14 @@ final class DishesDetailViewController: UIViewController {
         setupNavigationBar()
         setupSubviews()
         configureTableViewConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.navigationTxt,
+            content: Constants.Texts.navigationContent
+        )
     }
 
     // MARK: - Private Methodes
@@ -347,6 +360,10 @@ extension DishesDetailViewController {
     }
 
     @objc private func didTapShareButton() {
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.sharingTxt,
+            content: Constants.Texts.sharingContent
+        )
         presenter?.showActivityController()
     }
 

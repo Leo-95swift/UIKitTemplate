@@ -58,6 +58,10 @@ final class AuthViewController: UIViewController {
 
     var presenter: AuthPresenterProtocol?
 
+    // MARK: Private Properties
+
+    let caretaker = Caretaker()
+
     // MARK: - Visual Components
 
     private let loginLabel: UILabel = {
@@ -327,6 +331,22 @@ final class AuthViewController: UIViewController {
         guard let email = emailTextField.text,
               let password = passwordTextField.text
         else { return }
+
+        if caretaker.loadUserData(for: Login.login) == nil {
+            let userData = UserData(
+                userName: nil,
+                login: email,
+                password: password,
+                imageName: nil
+            )
+            do {
+                try caretaker.saveUserData(userData, key: Login.login)
+                Login.login = email
+            } catch {
+                print("jnjnjn")
+            }
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
             guard let self else { return }
             self.presenter?.checkCredentials(of: email, password: password)
@@ -640,3 +660,10 @@ extension AuthViewController: AuthViewControllerProtocol {
         }
     }
 }
+
+/// remove
+/// 1. создать слушателя который делает что то с информацией
+
+/// 2. отправителей данных
+
+/// 3. создать место для хранения данных
