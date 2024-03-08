@@ -19,7 +19,10 @@ struct ProfileStorage {
     }
 
     // Данные для заполнения ячейки с информацией о пользователе
-    let userInfo = UserInfo(imageName: Constants.avatarImageName, username: Constants.defaultUsername)
+    let userInfo = UserInfo(
+        imageName: Constants.avatarImageName,
+        username: Constants.defaultUsername
+    )
 
     // Данные для ячейки с бонусами
     let bonuses =
