@@ -60,7 +60,8 @@ final class AuthViewController: UIViewController {
 
     // MARK: Private Properties
 
-    let caretaker = Caretaker()
+    private let caretaker = Caretaker()
+    private var rotationAngle: CGFloat = 0.0
 
     // MARK: - Visual Components
 
@@ -318,24 +319,24 @@ final class AuthViewController: UIViewController {
     }
 
     @objc private func didTapLoginButton(_ sender: UIButton) {
+        rotationAngle += CGFloat.pi
         loginButton.setTitle("", for: .normal)
         loginButton.setImage(
             UIImage(systemName: "circle.hexagonpath"),
             for: .normal
         )
-        UIView.animate(withDuration: 3.0) {
-            sender.imageView?.transform = CGAffineTransform(
-                rotationAngle: CGFloat.pi
+        UIView.animate(withDuration: 2.0) {
+            self.loginButton.imageView?.transform = CGAffineTransform(
+                rotationAngle: self.rotationAngle
             )
         }
+
         guard let email = emailTextField.text,
               let password = passwordTextField.text
         else { return }
 
         if let existingCredentials = caretaker.loadUserData(for: email) {
-//            presenter?.checkCredentials(of: credentials.login, password: credentials.password)
             guard email == existingCredentials.login, password == existingCredentials.password else {
-                print("CREDENTIALS WRONG")
                 checkCredentials(isValid: false)
                 return
             }
@@ -353,11 +354,9 @@ final class AuthViewController: UIViewController {
             }
         }
         Login.login = email
-        presenter?.moveToMain()
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-//            guard let self else { return }
-//            self.presenter?.checkCredentials(of: email, password: password)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.presenter?.moveToMain()
+        }
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -659,13 +658,22 @@ extension AuthViewController: AuthViewControllerProtocol {
         if isValid {
             presenter?.moveToMain()
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 UIView.animate(withDuration: 2) {
+                    self.loginButton.setImage(UIImage(systemName: ""), for: .normal)
+                    self.loginButton.setTitle(Constants.Texts.loginButton, for: .normal)
                     self.warningLabel.isHidden = false
+                    self.updateUIForPassword(isValid: false)
                 } completion: { finished in
                     if finished {
                         UIView.animate(withDuration: 2) {
                             self.warningLabel.layer.opacity = 0.0
+                            self.updateUIForPassword(isValid: true)
+                        } completion: { finished in
+                            if finished {
+                                self.warningLabel.isHidden = true
+                                self.warningLabel.layer.opacity = 1.0
+                            }
                         }
                     }
                 }
@@ -673,10 +681,3 @@ extension AuthViewController: AuthViewControllerProtocol {
         }
     }
 }
-
-/// remove
-/// 1. создать слушателя который делает что то с информацией
-
-/// 2. отправителей данных
-
-/// 3. создать место для хранения данных
