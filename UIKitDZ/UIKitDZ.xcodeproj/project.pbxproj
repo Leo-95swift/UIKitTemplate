@@ -31,7 +31,6 @@
 		012777562B99DFAC00FFB55E /* Caretaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777552B99DFAC00FFB55E /* Caretaker.swift */; };
 		012777582B99E06500FFB55E /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777572B99E06500FFB55E /* UserData.swift */; };
 		0127775A2B99E1CC00FFB55E /* UserDataMemento.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777592B99E1CC00FFB55E /* UserDataMemento.swift */; };
-		0127775C2B99E4F500FFB55E /* kjnlnj.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0127775B2B99E4F500FFB55E /* kjnlnj.swift */; };
 		0127775E2B99EBC700FFB55E /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0127775D2B99EBC700FFB55E /* Login.swift */; };
 		012777622B9A287800FFB55E /* FileManagerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 012777612B9A287800FFB55E /* FileManagerService.swift */; };
 		0137AFC92B773DF10050C230 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0137AFC82B773DF10050C230 /* AppDelegate.swift */; };
@@ -106,7 +105,6 @@
 		012777552B99DFAC00FFB55E /* Caretaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caretaker.swift; sourceTree = "<group>"; };
 		012777572B99E06500FFB55E /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		012777592B99E1CC00FFB55E /* UserDataMemento.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDataMemento.swift; sourceTree = "<group>"; };
-		0127775B2B99E4F500FFB55E /* kjnlnj.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = kjnlnj.swift; sourceTree = "<group>"; };
 		0127775D2B99EBC700FFB55E /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		0127775F2B9A221300FFB55E /* UIKitDZ.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UIKitDZ.entitlements; sourceTree = "<group>"; };
 		012777612B9A287800FFB55E /* FileManagerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerService.swift; sourceTree = "<group>"; };
@@ -426,7 +424,6 @@
 				012777552B99DFAC00FFB55E /* Caretaker.swift */,
 				012777572B99E06500FFB55E /* UserData.swift */,
 				012777592B99E1CC00FFB55E /* UserDataMemento.swift */,
-				0127775B2B99E4F500FFB55E /* kjnlnj.swift */,
 				0127775D2B99EBC700FFB55E /* Login.swift */,
 			);
 			path = CaretakerService;
@@ -808,7 +805,6 @@
 				01F4410E2B96FF8300010CEC /* Validation.swift in Sources */,
 				8BB9459D2B96BFEA005B9CCB /* ShimmerTableViewCell.swift in Sources */,
 				8BA9303A2B940ECE009351AC /* DishImageTableViewCell.swift in Sources */,
-				0127775C2B99E4F500FFB55E /* kjnlnj.swift in Sources */,
 				8B04BFA82B8F0C1F005301C9 /* TermsOfUse.swift in Sources */,
 				8BB9459B2B96BFBD005B9CCB /* Shimmerable.swift in Sources */,
 				0124F9EC2B8CC1BC008BCA1E /* RecipesViewController.swift in Sources */,
