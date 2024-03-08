@@ -11,6 +11,7 @@ final class UserInfoTableCell: UITableViewCell {
         static let identifier = "UserInfoTableCell"
 
         enum Insets {
+            static let top: CGFloat = 36
             static let imageSize: CGFloat = 160
             static let halfImageSize: CGFloat = 80
         }
@@ -137,7 +138,7 @@ extension UserInfoTableCell {
         NSLayoutConstraint.activate([
             profileAvatarImageView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
-                constant: 36
+                constant: Constants.Insets.top
             ),
             profileAvatarImageView.centerXAnchor.constraint(
                 equalTo: contentView.centerXAnchor
