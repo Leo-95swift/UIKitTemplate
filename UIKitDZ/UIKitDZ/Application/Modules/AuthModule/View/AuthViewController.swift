@@ -332,25 +332,32 @@ final class AuthViewController: UIViewController {
               let password = passwordTextField.text
         else { return }
 
-        if caretaker.loadUserData(for: Login.login) == nil {
-            let userData = UserData(
+        if let existingCredentials = caretaker.loadUserData(for: email) {
+//            presenter?.checkCredentials(of: credentials.login, password: credentials.password)
+            guard email == existingCredentials.login, password == existingCredentials.password else {
+                print("CREDENTIALS WRONG")
+                checkCredentials(isValid: false)
+                return
+            }
+        } else {
+            let newUserData = UserData(
                 userName: nil,
                 login: email,
                 password: password,
                 imageName: nil
             )
             do {
-                try caretaker.saveUserData(userData, key: Login.login)
-                Login.login = email
+                try caretaker.saveUserData(newUserData, key: email)
             } catch {
                 print("jnjnjn")
             }
         }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            guard let self else { return }
-            self.presenter?.checkCredentials(of: email, password: password)
-        }
+        Login.login = email
+        presenter?.moveToMain()
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
+//            guard let self else { return }
+//            self.presenter?.checkCredentials(of: email, password: password)
+//        }
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -653,8 +660,14 @@ extension AuthViewController: AuthViewControllerProtocol {
             presenter?.moveToMain()
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                UIView.animate(withDuration: 1.0) {
+                UIView.animate(withDuration: 2) {
                     self.warningLabel.isHidden = false
+                } completion: { finished in
+                    if finished {
+                        UIView.animate(withDuration: 2) {
+                            self.warningLabel.layer.opacity = 0.0
+                        }
+                    }
                 }
             }
         }

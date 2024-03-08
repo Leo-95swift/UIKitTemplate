@@ -12,8 +12,3 @@ struct UserData: Codable, Equatable {
     // Название картинки пользователя
     let imageName: String?
 }
-
-/// kjbkjbjkb
-struct UsersData: Codable {
-    let usersData: [UserData]
-}
