@@ -13,7 +13,7 @@ final class AppCoordinator: BaseCoodinator {
     // MARK: - Private Methods
 
     override func start() {
-        if "admin" == "dmin" {
+        if "admin" == "admin" {
             goToMain()
         } else {
             goT​oAuth​()

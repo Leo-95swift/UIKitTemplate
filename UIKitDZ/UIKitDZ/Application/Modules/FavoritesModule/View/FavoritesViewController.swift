@@ -3,6 +3,12 @@
 
 import UIKit
 
+/// Интерфейс взаимодействия с view
+protocol FavoritesViewControllerProtocol: AnyObject {
+    /// Обновляет у вью данные о выбранных блюд
+    func updateFavoritesData(_ data: [Dish])
+}
+
 /// Экран для показа избранных рецептов
 final class FavoritesViewController: UIViewController {
     // MARK: - Constants
@@ -28,7 +34,7 @@ final class FavoritesViewController: UIViewController {
 
     // MARK: Public Properties
 
-    private var favoriteDishesStorage = FavoriteDishesStorage()
+    private var favoriteDishes: [Dish] = []
     private var isDataEmpty: Bool = false
 
     // MARK: Public Properties
@@ -71,11 +77,15 @@ final class FavoritesViewController: UIViewController {
         super.viewDidLoad()
         setupSubviews()
         configureSubviews()
+        presenter?.fetchFavoriteDishes()
+        updateDishes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        presenter?.fetchFavoriteDishes()
         updateDishes()
+        tableView.reloadData()
         fileManagerService?.sendInfoToDirectory(
             txtFileName: Constants.Texts.txt,
             content: Constants.Texts.content
@@ -99,9 +109,9 @@ final class FavoritesViewController: UIViewController {
     }
 
     private func updateDishes() {
-        isDataEmpty = Int.random(in: 0 ... 1) == 1
-        tableView.isHidden = isDataEmpty
-        noFavoritesStackView.isHidden = !isDataEmpty
+        tableView.isHidden = favoriteDishes.isEmpty
+        noFavoritesStackView.isHidden = !favoriteDishes.isEmpty
+        tableView.reloadData()
     }
 }
 
@@ -155,7 +165,7 @@ extension FavoritesViewController {
 
 extension FavoritesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        favoriteDishesStorage.favorites.count
+        favoriteDishes.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -164,7 +174,14 @@ extension FavoritesViewController: UITableViewDataSource {
             for: indexPath
         ) as? DishesTableViewCell else { return UITableViewCell() }
         cell.selectionStyle = .none
-        cell.configureCell(info: favoriteDishesStorage.favorites[indexPath.row])
+        cell.configureCell(info: favoriteDishes[indexPath.row])
         return cell
+    }
+}
+
+/// расширение для обнавления блюд
+extension FavoritesViewController: FavoritesViewControllerProtocol {
+    func updateFavoritesData(_ data: [Dish]) {
+        favoriteDishes = data
     }
 }
