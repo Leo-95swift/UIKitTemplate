@@ -27,6 +27,12 @@ final class ProfileViewController: UIViewController {
         static let cardViewHeightMultiplier = 0.9
         static let cardHandleAreaHeight: CGFloat = 150
         static let cardViewCornerRadius: CGFloat = 30
+
+        enum Texts {
+            static let txt = "navigations.txt"
+            static let content = "Пользователь открыл Экран профиля"
+            static let defaultUsername = "Name SurName"
+        }
     }
 
     enum CardState {
@@ -34,6 +40,7 @@ final class ProfileViewController: UIViewController {
         case collapsed
     }
 
+    private let caretaker = Caretaker()
     private let termsOfUseStorage = TermsOfUseStorage()
 
     // MARK: - Visual Components
@@ -52,6 +59,7 @@ final class ProfileViewController: UIViewController {
     // MARK: Public Properties
 
     var presenter: ProfilePresenterProtocol?
+    var fileManagerService: FileManagerService?
     var passTextToCellHandler: StringHandler?
 
     // MARK: - Private Properties
@@ -66,6 +74,7 @@ final class ProfileViewController: UIViewController {
 
     private var runningAnimations: [UIViewPropertyAnimator] = []
     private var animationProggresWhenInterrupted: CGFloat = 0
+    private var userName: String?
 
     // MARK: - Life Cycle
 
@@ -74,6 +83,16 @@ final class ProfileViewController: UIViewController {
         setupSubviews()
         setupNavigationBar()
         setupTableViewConstraints()
+        fetchUserInfo()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fetchUserInfo()
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: Constants.Texts.content
+        )
     }
 
     override func viewDidLayoutSubviews() {
@@ -142,6 +161,32 @@ final class ProfileViewController: UIViewController {
             panGestureRecognizer
         )
     }
+
+    private func fetchUserInfo() {
+        if let userData = caretaker.loadUserData(for: Login.login) {
+            print(userData)
+            if let userName = userData.userName {
+                self.userName = userName
+                tableView.reloadData()
+            } else {
+                userName = Constants.Texts.defaultUsername
+            }
+        }
+    }
+
+    private func updateUserInfo(with userName: String) {
+        if let userData = caretaker.loadUserData(for: Login.login) {
+            let updatedUserData = UserData(
+                userName: userName,
+                login: userData.login,
+                password: userData.password,
+                imageName: nil
+            )
+            do {
+                try caretaker.saveUserData(updatedUserData, key: Login.login)
+            } catch {}
+        }
+    }
 }
 
 // MARK: - ProfileViewController + UITableViewDataSource
@@ -175,8 +220,14 @@ extension ProfileViewController: UITableViewDataSource {
             cell.showAlert = { [weak self] in
                 self?.presenter?.showNameChangeAlert()
             }
+
+            if let userName = userName {
+                cell.changeUserName(text: userName)
+            }
             passTextToCellHandler = { text in
                 cell.changeUserName(text: text)
+                // todo
+                self.updateUserInfo(with: text)
             }
             return cell
         case .bonuses:

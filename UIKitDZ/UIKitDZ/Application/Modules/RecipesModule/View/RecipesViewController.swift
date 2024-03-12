@@ -22,9 +22,13 @@ final class RecipesViewController: UIViewController {
         }
 
         enum Texts {
+            static let txt = "navigations.txt"
+            static let content = "Пользователь открыл Экран категорий"
             static let title = "Recipes"
         }
     }
+
+    let fileManager = FileManager.default
 
     // MARK: Private Properties
 
@@ -33,6 +37,7 @@ final class RecipesViewController: UIViewController {
     // MARK: Public Properties
 
     var presenter: RecipesPresenter?
+    var fileManagerService: FileManagerService?
 
     // MARK: - Visual Components
 
@@ -65,6 +70,14 @@ final class RecipesViewController: UIViewController {
         configureSubviews()
         configureCollectionView()
         presenter?.fetchCategories()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: Constants.Texts.content
+        )
     }
 
     // MARK: - Private Methodes

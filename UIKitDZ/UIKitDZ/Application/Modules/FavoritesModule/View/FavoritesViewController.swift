@@ -16,6 +16,8 @@ final class FavoritesViewController: UIViewController {
         }
 
         enum Texts {
+            static let txt = "navigations.txt"
+            static let content = "Пользователь открыл Экран избранных блюд"
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
             static let title = "Favorites"
@@ -32,6 +34,7 @@ final class FavoritesViewController: UIViewController {
     // MARK: Public Properties
 
     var presenter: FavoritesPresenter?
+    var fileManagerService: FileManagerService?
 
     // MARK: - Visual Components
 
@@ -73,6 +76,10 @@ final class FavoritesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateDishes()
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: Constants.Texts.content
+        )
     }
 
     // MARK: - Private Methodes

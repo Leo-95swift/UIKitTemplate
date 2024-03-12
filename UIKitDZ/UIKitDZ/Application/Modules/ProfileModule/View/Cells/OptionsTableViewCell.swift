@@ -70,7 +70,7 @@ final class OptionsTableViewCell: UITableViewCell {
         contentView.addSubviews([optionsView, optionsLabel, lineView], prepareForAutolayout: true)
         optionsView.addSubviews([optionsImageView], prepareForAutolayout: true)
     }
-    
+
     private func configureSubviews() {
         setupBackgroundViewConstraints()
         setupOptionsImageViewConstraints()
@@ -89,7 +89,8 @@ extension OptionsTableViewCell {
             ),
             optionsView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
-                constant: 15),
+                constant: 15
+            ),
             optionsView.widthAnchor.constraint(
                 equalToConstant: 48
             ),

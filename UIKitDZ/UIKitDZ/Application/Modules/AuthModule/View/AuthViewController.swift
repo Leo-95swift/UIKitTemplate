@@ -58,6 +58,11 @@ final class AuthViewController: UIViewController {
 
     var presenter: AuthPresenterProtocol?
 
+    // MARK: Private Properties
+
+    private let caretaker = Caretaker()
+    private var rotationAngle: CGFloat = 0.0
+
     // MARK: - Visual Components
 
     private let loginLabel: UILabel = {
@@ -315,22 +320,43 @@ final class AuthViewController: UIViewController {
     }
 
     @objc private func didTapLoginButton(_ sender: UIButton) {
+        rotationAngle += CGFloat.pi
         loginButton.setTitle("", for: .normal)
         loginButton.setImage(
             UIImage(systemName: "circle.hexagonpath"),
             for: .normal
         )
-        UIView.animate(withDuration: 3.0) {
-            sender.imageView?.transform = CGAffineTransform(
-                rotationAngle: CGFloat.pi
+        UIView.animate(withDuration: 2.0) {
+            self.loginButton.imageView?.transform = CGAffineTransform(
+                rotationAngle: self.rotationAngle
             )
         }
+
         guard let email = emailTextField.text,
               let password = passwordTextField.text
         else { return }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
-            guard let self else { return }
-            self.presenter?.checkCredentials(of: email, password: password)
+
+        if let existingCredentials = caretaker.loadUserData(for: email) {
+            guard email == existingCredentials.login, password == existingCredentials.password else {
+                checkCredentials(isValid: false)
+                return
+            }
+        } else {
+            let newUserData = UserData(
+                userName: nil,
+                login: email,
+                password: password,
+                imageName: nil
+            )
+            do {
+                try caretaker.saveUserData(newUserData, key: email)
+            } catch {
+                print("jnjnjn")
+            }
+        }
+        Login.login = email
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.presenter?.moveToMain()
         }
     }
 
@@ -633,9 +659,24 @@ extension AuthViewController: AuthViewControllerProtocol {
         if isValid {
             presenter?.moveToMain()
         } else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                UIView.animate(withDuration: 1.0) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                UIView.animate(withDuration: 2) {
+                    self.loginButton.setImage(UIImage(systemName: ""), for: .normal)
+                    self.loginButton.setTitle(Constants.Texts.loginButton, for: .normal)
                     self.warningLabel.isHidden = false
+                    self.updateUIForPassword(isValid: false)
+                } completion: { finished in
+                    if finished {
+                        UIView.animate(withDuration: 2) {
+                            self.warningLabel.layer.opacity = 0.0
+                            self.updateUIForPassword(isValid: true)
+                        } completion: { finished in
+                            if finished {
+                                self.warningLabel.isHidden = true
+                                self.warningLabel.layer.opacity = 1.0
+                            }
+                        }
+                    }
                 }
             }
         }
