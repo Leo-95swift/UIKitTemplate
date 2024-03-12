@@ -308,7 +308,7 @@ final class AuthViewController: UIViewController {
             object: nil
         )
         NotificationCenter.default.addObserver(
-            self, 
+            self,
             selector: #selector(keyboardWillHide),
             name: UIResponder.keyboardWillHideNotification,
             object: nil

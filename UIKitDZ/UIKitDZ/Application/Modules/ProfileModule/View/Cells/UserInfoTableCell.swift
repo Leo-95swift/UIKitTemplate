@@ -10,6 +10,12 @@ final class UserInfoTableCell: UITableViewCell {
     enum Constants {
         static let identifier = "UserInfoTableCell"
 
+        enum Insets {
+            static let top: CGFloat = 36
+            static let imageSize: CGFloat = 160
+            static let halfImageSize: CGFloat = 80
+        }
+
         enum Texts {
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
@@ -26,15 +32,20 @@ final class UserInfoTableCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(named: ProfileStorage.Constants.avatarImageName)
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = Constants.Insets.halfImageSize
+        imageView.layer.masksToBounds = true
         return imageView
     }()
 
     private var profileImageLabel: UILabel = {
         let label = UILabel()
-        label.font = .myFont(fontName: Constants.Texts.verdanaBoldFont, fontSize: 25)
         label.numberOfLines = 0
         label.textColor = .optionsLabelText
         label.textAlignment = .center
+        label.font = .myFont(
+            fontName: Constants.Texts.verdanaBoldFont,
+            fontSize: 25
+        )
         return label
     }()
 
@@ -50,6 +61,7 @@ final class UserInfoTableCell: UITableViewCell {
     // MARK: - Public Properties
 
     var showAlert: VoidHandler?
+    var onImageTap: VoidHandler?
 
     // MARK: - Initalizers
 
@@ -57,12 +69,14 @@ final class UserInfoTableCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupSubviews()
         configureSubviews()
+        setupImageTap()
     }
 
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupSubviews()
         configureSubviews()
+        setupImageTap()
     }
 
     // MARK: - Public Methods
@@ -74,6 +88,14 @@ final class UserInfoTableCell: UITableViewCell {
 
     func changeUserName(text: String) {
         profileImageLabel.text = text
+    }
+
+    func changeUserAvatar(image: UIImage) {
+        profileAvatarImageView.image = image
+    }
+
+    func changeUserAvatar(imageName: String) {
+        profileAvatarImageView.image = UIImage(named: imageName)
     }
 
     // MARK: - Private Methodes
@@ -92,8 +114,21 @@ final class UserInfoTableCell: UITableViewCell {
         setupPencilButtonConstraints()
     }
 
+    private func setupImageTap() {
+        let tapGesture = UITapGestureRecognizer(
+            target: self,
+            action: #selector(handleImageTap)
+        )
+        profileAvatarImageView.addGestureRecognizer(tapGesture)
+        profileAvatarImageView.isUserInteractionEnabled = true
+    }
+
     @objc private func pencilButtonTapped() {
         showAlert?()
+    }
+
+    @objc func handleImageTap() {
+        onImageTap?()
     }
 }
 
@@ -103,16 +138,16 @@ extension UserInfoTableCell {
         NSLayoutConstraint.activate([
             profileAvatarImageView.topAnchor.constraint(
                 equalTo: contentView.topAnchor,
-                constant: 36
+                constant: Constants.Insets.top
             ),
             profileAvatarImageView.centerXAnchor.constraint(
                 equalTo: contentView.centerXAnchor
             ),
             profileAvatarImageView.widthAnchor.constraint(
-                equalToConstant: 160
+                equalToConstant: Constants.Insets.imageSize
             ),
             profileAvatarImageView.heightAnchor.constraint(
-                equalToConstant: 160
+                equalToConstant: Constants.Insets.imageSize
             ),
         ])
     }
