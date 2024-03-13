@@ -2,7 +2,7 @@
 // Copyright © RoadMap. All rights reserved.
 
 /// Источник данных для рецептов
-struct Recipe {
+struct DishRecipe {
     static let recipe = """
     1/2 to 2 fish heads, depending on size,
     about 5 pounds total

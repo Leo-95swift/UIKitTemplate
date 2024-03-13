@@ -50,6 +50,8 @@
 		01C7A10F2BA0CAB7006185DE /* SaladDishes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A10E2BA0CAB7006185DE /* SaladDishes.swift */; };
 		01C7A1112BA0CACA006185DE /* SideDishes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1102BA0CACA006185DE /* SideDishes.swift */; };
 		01C7A1132BA0CAF9006185DE /* SoupDishes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1122BA0CAF9006185DE /* SoupDishes.swift */; };
+		01C7A1152BA189C3006185DE /* DetailsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1142BA189C3006185DE /* DetailsDTO.swift */; };
+		01C7A1182BA18F20006185DE /* DishesDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1172BA18F20006185DE /* DishesDTO.swift */; };
 		01C8DD4A2B909D7700356868 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD492B909D7700356868 /* Category.swift */; };
 		01C8DD4C2B909D9F00356868 /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD4B2B909D9F00356868 /* Dish.swift */; };
 		01C8DD4E2B909DC000356868 /* Nutrients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD4D2B909DC000356868 /* Nutrients.swift */; };
@@ -138,6 +140,8 @@
 		01C7A10E2BA0CAB7006185DE /* SaladDishes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaladDishes.swift; sourceTree = "<group>"; };
 		01C7A1102BA0CACA006185DE /* SideDishes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideDishes.swift; sourceTree = "<group>"; };
 		01C7A1122BA0CAF9006185DE /* SoupDishes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoupDishes.swift; sourceTree = "<group>"; };
+		01C7A1142BA189C3006185DE /* DetailsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsDTO.swift; sourceTree = "<group>"; };
+		01C7A1172BA18F20006185DE /* DishesDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishesDTO.swift; sourceTree = "<group>"; };
 		01C8DD492B909D7700356868 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		01C8DD4B2B909D9F00356868 /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
 		01C8DD4D2B909DC000356868 /* Nutrients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nutrients.swift; sourceTree = "<group>"; };
@@ -505,6 +509,7 @@
 		01C7A0F92BA088F6006185DE /* NetworkService */ = {
 			isa = PBXGroup;
 			children = (
+				01C7A1162BA18F0F006185DE /* DTO */,
 				01C7A0FA2BA08985006185DE /* NetworkService.swift */,
 			);
 			path = NetworkService;
@@ -525,6 +530,15 @@
 				01C7A1022BA0C9F9006185DE /* DessertDishes.swift */,
 			);
 			path = Dishes;
+			sourceTree = "<group>";
+		};
+		01C7A1162BA18F0F006185DE /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				01C7A1172BA18F20006185DE /* DishesDTO.swift */,
+				01C7A1142BA189C3006185DE /* DetailsDTO.swift */,
+			);
+			path = DTO;
 			sourceTree = "<group>";
 		};
 		01C8DD482B909D5C00356868 /* Model */ = {
@@ -836,6 +850,7 @@
 				0124FA4A2B8DBFF9008BCA1E /* ProfileCoordinator.swift in Sources */,
 				012777562B99DFAC00FFB55E /* Caretaker.swift in Sources */,
 				8B5CBDA12B91729300999F62 /* SortingStates.swift in Sources */,
+				01C7A1182BA18F20006185DE /* DishesDTO.swift in Sources */,
 				01C7A1032BA0C9F9006185DE /* DessertDishes.swift in Sources */,
 				8B04BF9F2B8ECB5A005301C9 /* ProfileOption.swift in Sources */,
 				01C7A0FB2BA08985006185DE /* NetworkService.swift in Sources */,
@@ -879,6 +894,7 @@
 				0124F9EC2B8CC1BC008BCA1E /* RecipesViewController.swift in Sources */,
 				0124FA402B8DB8DB008BCA1E /* RecipesPresenter.swift in Sources */,
 				0124F9F02B8CC20D008BCA1E /* BonusViewController.swift in Sources */,
+				01C7A1152BA189C3006185DE /* DetailsDTO.swift in Sources */,
 				01C8DD712B931BCF00356868 /* DishesDetailViewController.swift in Sources */,
 				01C8DD5D2B90E08800356868 /* CategoriesCollectionViewCell.swift in Sources */,
 				8B04BF932B8E0DD1005301C9 /* UserInfoTableCell.swift in Sources */,

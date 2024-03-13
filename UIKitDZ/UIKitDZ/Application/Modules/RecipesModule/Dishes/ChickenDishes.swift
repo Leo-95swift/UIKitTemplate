@@ -17,7 +17,7 @@ struct ChickenDishes {
                 fats: Constants.Fats19,
                 proteins: Constants.Proteins19
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName20,
@@ -30,7 +30,7 @@ struct ChickenDishes {
                 fats: Constants.Fats20,
                 proteins: Constants.Proteins20
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName21,
@@ -43,7 +43,7 @@ struct ChickenDishes {
                 fats: Constants.Fats21,
                 proteins: Constants.Proteins21
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName22,
@@ -56,7 +56,7 @@ struct ChickenDishes {
                 fats: Constants.Fats22,
                 proteins: Constants.Proteins22
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName23,
@@ -69,7 +69,7 @@ struct ChickenDishes {
                 fats: Constants.Fats23,
                 proteins: Constants.Proteins23
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName24,
@@ -82,7 +82,7 @@ struct ChickenDishes {
                 fats: Constants.Fats24,
                 proteins: Constants.Proteins24
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName25,
@@ -95,7 +95,7 @@ struct ChickenDishes {
                 fats: Constants.Fats25,
                 proteins: Constants.Proteins25
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName26,
@@ -108,7 +108,7 @@ struct ChickenDishes {
                 fats: Constants.Fats26,
                 proteins: Constants.Proteins26
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         ),
         Dish(
             dishName: Constants.dishName27,
@@ -121,7 +121,7 @@ struct ChickenDishes {
                 fats: Constants.Fats27,
                 proteins: Constants.Proteins27
             ),
-            recipe: Recipe.recipe
+            recipe: DishRecipe.recipe
         )
     ]
 

@@ -149,7 +149,10 @@ final class DishesViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        let networkService = NetworkService()
+        networkService.getDishes { result in
+            print(result)
+        }
         fileManagerService?.sendInfoToDirectory(
             txtFileName: Constants.Texts.txt,
             content: makeContent(
@@ -157,21 +160,6 @@ final class DishesViewController: UIViewController {
                 category: category
             )
         )
-    }
-
-    private func makeContent(
-        from startContent: String,
-        category: Category?
-    ) -> String {
-        let resultCategoryName = category
-            .flatMap { categoriesMap[$0.categoryName] } ?? ""
-        let result = startContent + (
-            resultCategoryName.isEmpty
-                ? ""
-                : " \(resultCategoryName)"
-        )
-
-        return result
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -272,6 +260,21 @@ final class DishesViewController: UIViewController {
         configureTableViewConstraints()
         configureNoDishesStackViewConstraints()
         configureSearchBarConstraints()
+    }
+
+    private func makeContent(
+        from startContent: String,
+        category: Category?
+    ) -> String {
+        let resultCategoryName = category
+            .flatMap { categoriesMap[$0.categoryName] } ?? ""
+        let result = startContent + (
+            resultCategoryName.isEmpty
+                ? ""
+                : " \(resultCategoryName)"
+        )
+
+        return result
     }
 
     private func setupSortingItemsAction() {
