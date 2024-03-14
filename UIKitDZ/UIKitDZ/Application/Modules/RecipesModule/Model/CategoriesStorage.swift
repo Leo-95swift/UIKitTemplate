@@ -3,69 +3,108 @@
 
 import Foundation
 
-/// Источник данных для экранов категорий, блюд и рецептов
+// Источник данных для экранов категорий, блюд и рецептов
 struct CategoriesStorage {
     lazy var categories = [
         Category(
             categoryName: Constants.categoryName1,
-            categoryImageName: Constants.categoryImageName1,
-            dishes: saladDishes
+            categoryImageName: Constants.categoryImageName1
         ),
         Category(
             categoryName: Constants.categoryName2,
-            categoryImageName: Constants.categoryImageName2,
-            dishes: soupDishes
+            categoryImageName: Constants.categoryImageName2
         ),
         Category(
             categoryName: Constants.categoryName3,
-            categoryImageName: Constants.categoryImageName3,
-            dishes: chickenDishes
+            categoryImageName: Constants.categoryImageName3
         ),
         Category(
             categoryName: Constants.categoryName4,
-            categoryImageName: Constants.categoryImageName4,
-            dishes: meatDishes
+            categoryImageName: Constants.categoryImageName4
         ),
         Category(
             categoryName: Constants.categoryName5,
-            categoryImageName: Constants.categoryImageName5,
-            dishes: fishDishes
+            categoryImageName: Constants.categoryImageName5
         ),
         Category(
             categoryName: Constants.categoryName6,
-            categoryImageName: Constants.categoryImageName6,
-            dishes: sideDishDishes
+            categoryImageName: Constants.categoryImageName6
         ),
         Category(
             categoryName: Constants.categoryName7,
-            categoryImageName: Constants.categoryImageName7,
-            dishes: drinkDishes
+            categoryImageName: Constants.categoryImageName7
         ),
         Category(
             categoryName: Constants.categoryName8,
-            categoryImageName: Constants.categoryImageName8,
-            dishes: pancakeDishes
+            categoryImageName: Constants.categoryImageName8
         ),
         Category(
             categoryName: Constants.categoryName9,
-            categoryImageName: Constants.categoryImageName9,
-            dishes: dessertDishes
+            categoryImageName: Constants.categoryImageName9
         )
     ]
 
-    let saladDishes = SaladDishes().saladDishes
-    let soupDishes = SoupDishes().soupDishes
-    let chickenDishes = ChickenDishes().chickenDishes
-    let meatDishes = MeatDishes().meatDishes
-    let fishDishes = FishDishes().fishDishes
-    let sideDishDishes = SideDishDishes().sideDishDishes
-    let drinkDishes = DrinkDishes().drinkDishes
-    let pancakeDishes = PancakeDishes().pancakeDishes
-    let dessertDishes = DessertDishes().dessertDishes
+//    lazy var categories = [
+//        Category(
+//            categoryName: Constants.categoryName1,
+//            categoryImageName: Constants.categoryImageName1,
+//            dishes: saladDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName2,
+//            categoryImageName: Constants.categoryImageName2,
+//            dishes: soupDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName3,
+//            categoryImageName: Constants.categoryImageName3,
+//            dishes: chickenDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName4,
+//            categoryImageName: Constants.categoryImageName4,
+//            dishes: meatDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName5,
+//            categoryImageName: Constants.categoryImageName5,
+//            dishes: fishDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName6,
+//            categoryImageName: Constants.categoryImageName6,
+//            dishes: sideDishDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName7,
+//            categoryImageName: Constants.categoryImageName7,
+//            dishes: drinkDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName8,
+//            categoryImageName: Constants.categoryImageName8,
+//            dishes: pancakeDishes
+//        ),
+//        Category(
+//            categoryName: Constants.categoryName9,
+//            categoryImageName: Constants.categoryImageName9,
+//            dishes: dessertDishes
+//        )
+//    ]
+
+//    let saladDishes = SaladDishes().saladDishes
+//    let soupDishes = SoupDishes().soupDishes
+//    let chickenDishes = ChickenDishes().chickenDishes
+//    let meatDishes = MeatDishes().meatDishes
+//    let fishDishes = FishDishes().fishDishes
+//    let sideDishDishes = SideDishDishes().sideDishDishes
+//    let drinkDishes = DrinkDishes().drinkDishes
+//    let pancakeDishes = PancakeDishes().pancakeDishes
+//    let dessertDishes = DessertDishes().dessertDishes
 
     // MARK: - Constants
 
-    /// Источник данных для категорий
+    // Источник данных для категорий
     enum Constants {
         static let categoryName1 = "Salad"
         static let categoryImageName1 = "salad"

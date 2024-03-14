@@ -3,35 +3,70 @@
 
 import Foundation
 
+/// Протокол NetworkServiceProtocol
+protocol NetworkServiceProtocol {
+    /// Получение рецепта через JSON
+    func getDishes(completionHandler: @escaping (Result<[Dish], Error>) -> Void)
+//    /// Для получения детальной информации о рицепте
+    func getDishesDetail(
+        _ uri: String,
+        completionHandler: @escaping (Result<DishDetail, Error>) -> Void
+    )
+}
+
 /// шйоншр
-final class NetworkService {
-    // MARK: - DishType
+final class NetworkService: NetworkServiceProtocol {
+    // MARK: - Constants
 
-    enum DishType {
-        case salad, soup, chicken, meat, fish, sideDish, pancake, drinks, desserts
+    private enum Constants {
+        static let scheme = "https"
+        static let host = "api.edamam.com"
+        static let path = "/api/recipes/v2"
+        static let pathWithUri = "/api/recipes/v2/by-uri"
+        static let componentsTypeKey = "type"
+        static let identefire = "app_id"
+        static let componnentsAppKey = "app_key"
+        static let componentsDishTypeKey = "dishType"
+        static let type = "public"
+        static let appKey = "2412c4c0d52ca924f6d6a486c1aa1ab6"
+        static let appId = "a726fb9c"
+        static let dishType = "dishType"
+    } /// by-uri{http://www.edamam.com/ontologies/edamam.owl#recipe_e074fb5e814ed30309780398e68c2b90}
+    ///
 
-        var dishCategory: String {
-            switch self {
-            case .salad:
-                return "Salad"
-            case .soup:
-                return "Soup"
-            case .chicken, .meat, .fish, .sideDish:
-                return "Main course"
-            case .pancake:
-                return "Salad"
-            case .drinks:
-                return "Drinks"
-            case .desserts:
-                return "Desserts"
-            }
-        }
+    private var component = URLComponents()
+    private let scheme = Constants.scheme
+    private let host = Constants.host
+    private let path = Constants.path
+
+    func createURLQueryItems(type: DishType) -> [URLQueryItem] {
+        [
+            URLQueryItem(
+                name: Constants.componentsTypeKey,
+                value: Constants.type
+            ),
+            URLQueryItem(
+                name: Constants.identefire,
+                value: Constants.appId
+            ),
+            URLQueryItem(
+                name: Constants.componnentsAppKey,
+                value: Constants.appKey
+            ),
+            URLQueryItem(
+                name: Constants.componentsDishTypeKey,
+                value: type.dishCategory
+            )
+        ]
     }
 
-    var component = URLComponents()
-    var scheme = "https"
-    var host = "api.edamam.com"
-    var path = "/api/recipes/v2"
+    func createURLComponents(type: DishType, path: String) {
+        component.scheme = scheme
+        component.host = host
+        component.queryItems = createURLQueryItems(type: type)
+        component.path = path
+    }
+
     var urlQueryItems: [URLQueryItem] = [
         .init(name: "type", value: "public"),
         .init(name: "app_id", value: "a726fb9c"),
@@ -39,7 +74,7 @@ final class NetworkService {
         .init(name: "dishType", value: DishType.salad.dishCategory)
     ]
 
-    func getDishes(completionHandler: @escaping (Result<AllDishes, Error>) -> Void) {
+    func getDishes(completionHandler: @escaping (Result<[Dish], Error>) -> Void) {
         component.scheme = scheme
         component.host = host
         component.queryItems = urlQueryItems
@@ -54,15 +89,48 @@ final class NetworkService {
             }
             if let data = data {
                 do {
-                    let allDishes = try JSONDecoder().decode(AllDishes.self, from: data)
-                    let hits = allDishes.hits
-                    var recipes: [Recipe] = []
+                    let allHits = try JSONDecoder().decode(RecipesHitsDTO.self, from: data)
+                    let hits = allHits.hits
+                    var recipes: [Dish] = []
                     for hit in hits {
-                        recipes.append(hit.recipe)
+                        recipes.append(Dish(dish: hit.recipe))
                     }
+                    completionHandler(.success(recipes))
                     print(recipes)
                 } catch {
+                    completionHandler(.failure(error))
                     print(error.localizedDescription)
+                }
+            }
+        }.resume()
+    }
+
+    func getDishesDetail(_ uri: String, completionHandler: @escaping (Result<DishDetail, Error>) -> Void) {
+        let urlQueryItemsDetail: [URLQueryItem] = [
+            .init(name: "uri", value: uri)
+        ]
+        createURLComponents(
+            type: .salad,
+            path: Constants.pathWithUri
+        )
+        component.queryItems?.append(contentsOf: urlQueryItemsDetail)
+        guard let url = component.url else { return }
+        let request = URLRequest(url: url)
+        URLSession.shared.dataTask(with: request) { data, _, error in
+            if let error = error {
+                completionHandler(.failure(error))
+                return
+            }
+            if let data = data {
+                do {
+                    let dishHitsDTO = try JSONDecoder().decode(DishHitsDTO.self, from: data)
+                    guard let result = dishHitsDTO.hits.first?.recipe
+                    else { return }
+                    let recipe = result
+                    let detail = DishDetail(dto: recipe)
+                    completionHandler(.success(detail))
+                } catch {
+                    completionHandler(.failure(error))
                 }
             }
         }.resume()

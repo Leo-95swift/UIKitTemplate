@@ -14,9 +14,11 @@ protocol DishesPresenterProtocol {
     /// Просит презентера вернуться на экран с категориями рецептов
     func moveToRecipes()
     /// Просит презентера перейти на экран деталей про блюдо
-    func moveToDishesDetail(data: Dish)
+    func moveToDishesDetail(data: DishDetail)
     /// Просит презентера получить данные о категории
-    func fetchCategory()
+    func fetchDishes()
+    /// Просит презентера получить данные о конкретном блюде
+    func fetchDishDetailes(uri: String)
 }
 
 /// Presenter для страницы рецептов
@@ -25,18 +27,20 @@ final class DishesPresenter {
 
     private weak var view: DishesViewControllerProtocol?
     private weak var recipesCoordinator: RecipesCoordinator?
-    private var data: Category
+    let networkService: NetworkServiceProtocol?
+    private var dish: [Dish]?
+    private var dishDetail: DishDetail?
 
     // MARK: - Initializers
 
     init(
         view: DishesViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        data: Category
+        networkService: NetworkServiceProtocol
     ) {
         self.view = view
         recipesCoordinator = coordinator
-        self.data = data
+        self.networkService = networkService
     }
 }
 
@@ -59,11 +63,33 @@ extension DishesPresenter: DishesPresenterProtocol {
         recipesCoordinator?.returnToRecipes()
     }
 
-    func moveToDishesDetail(data: Dish) {
+    func moveToDishesDetail(data: DishDetail) {
         recipesCoordinator?.pushDishesDetailView(data: data)
     }
 
-    func fetchCategory() {
-        view?.getCategory(data)
+    func fetchDishes() {
+        networkService?.getDishes(completionHandler: { result in
+            switch result {
+            case let .success(dishes):
+                self.dish = dishes
+                self.view?.updateDishes(dishes)
+            case let .failure(error):
+                print(error.localizedDescription)
+            }
+        })
+    }
+
+    func fetchDishDetailes(uri: String) {
+        networkService?.getDishesDetail(uri, completionHandler: { result in
+            switch result {
+            case let .success(dishDetail):
+                self.dishDetail = dishDetail
+                DispatchQueue.main.async {
+                    self.moveToDishesDetail(data: dishDetail)
+                }
+            case let .failure(error):
+                print(error)
+            }
+        })
     }
 }

@@ -49,20 +49,22 @@ final class AppBuilder {
         data: Category
     ) -> DishesViewController {
         let view = DishesViewController()
-        let service = FileManagerService()
+        let fileManaerService = FileManagerService()
+        let networkService = NetworkService()
+
         let dishesPresenter = DishesPresenter(
             view: view,
             coordinator: coordinator,
-            data: data
+            networkService: networkService
         )
         view.presenter = dishesPresenter
-        view.fileManagerService = service
+        view.fileManagerService = fileManaerService
         return view
     }
 
     func makeDishesDetailModule(
         coordinator: RecipesCoordinator,
-        data: Dish
+        data: DishDetail
     ) -> DishesDetailViewController {
         let view = DishesDetailViewController()
         let service = FileManagerService()

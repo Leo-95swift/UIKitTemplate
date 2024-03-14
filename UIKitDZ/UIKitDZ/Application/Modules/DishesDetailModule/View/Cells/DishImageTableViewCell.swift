@@ -135,10 +135,10 @@ final class DishImageTableViewCell: UITableViewCell {
 
     // MARK: - Public Methods
 
-    func configure(data: Dish) {
-        dishImageView.image = UIImage(named: data.dishImageName)
-        totalWeightLabel.text = data.totalWeight
-        cookingTimeMinutesLabel.text = data.cookTime
+    func configure(data: DishDetail) {
+        dishImageView.getImage(from: data.images)
+        totalWeightLabel.text = roundAndConvertToString(data.totalWeight) + " g"
+        cookingTimeMinutesLabel.text = "\(data.totalTime) min"
     }
 
     // MARK: - Private Methods
@@ -166,6 +166,12 @@ final class DishImageTableViewCell: UITableViewCell {
             cookingTimeImageView,
             cookingLabelsStackView
         ])
+    }
+
+    private func roundAndConvertToString(_ value: Double) -> String {
+        let roundedValue = value.rounded()
+        let stringValue = String(Int(roundedValue))
+        return stringValue
     }
 
     private func configureConstraints() {

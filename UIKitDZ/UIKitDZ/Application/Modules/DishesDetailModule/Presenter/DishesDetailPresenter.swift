@@ -23,14 +23,14 @@ final class DishesDetailPresenter {
 
     private weak var view: DishesDetailViewControllerProtocol?
     private weak var recipesCoordinator: RecipesCoordinator?
-    private var data: Dish
+    private var data: DishDetail
 
     // MARK: - Initializers
 
     init(
         view: DishesDetailViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        data: Dish
+        data: DishDetail
     ) {
         self.view = view
         recipesCoordinator = coordinator
@@ -58,9 +58,9 @@ extension DishesDetailPresenter: DishesDetailPresenterProtocol {
     }
 
     func updateStateForDish(_ dish: Dish) {
-        FavoritesDataManager.shared.updateStateForDish(
-            dish.dishName,
-            dish: dish
-        )
+//        FavoritesDataManager.shared.updateStateForDish(
+//            dish.dishName,
+//            dish: dish
+//        )
     }
 }

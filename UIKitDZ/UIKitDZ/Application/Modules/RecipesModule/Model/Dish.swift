@@ -3,18 +3,36 @@
 
 import Foundation
 
-/// все блюда данной категории
-struct Dish {
-    // название блюда
+/// Все блюда данной категории
+class Dish {
+    // Название блюда
     let dishName: String
-    // картинка для блюда
+    // Картинка для блюда
     let dishImageName: String
-    // время приготовления
-    let cookTime: String
-    // суммарное количество колорий
-    let totalWeight: String
-    // количество калорий
+    // Время приготовления
+    let cookTime: Double
+    // Суммарное количество колорий
+    let totalWeight: Double
+    // Количество калорий
     let nutrients: Nutrients
-    // рецепт приготовления
+    // Рецепт приготовления
     let recipe: String
+    // Uri для блюдо
+    let uri: String
+
+    init(dish: RecipeDTO) {
+        dishName = dish.label
+        dishImageName = dish.image
+        cookTime = dish.totalTime
+        totalWeight = dish.totalWeight
+
+        nutrients = Nutrients(
+            enercKcal: "enercKcal",
+            carbohydrates: "carbohydrates",
+            fats: "fats",
+            proteins: "proteins"
+        )
+        recipe = "recipe"
+        uri = dish.uri
+    }
 }
