@@ -12,7 +12,7 @@ protocol DishesViewControllerProtocol: AnyObject {
     /// Обновляет UI  у кнопки сортировки по времени
     func updateTimeView()
     /// Получает данные показа деталей категории
-    func getCategory(_ category: Category)
+    func updateDishes(_ dishes: [Dish])
 }
 
 /// Экран для показа блюд
@@ -32,6 +32,11 @@ final class DishesViewController: UIViewController {
         }
 
         enum Texts {
+            static let txt = "navigations.txt"
+            static let content = """
+            Пользователь открыл Экран блюд -\n
+            Пользовать перешел на Экран со списком рецептов из
+            """
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
             static let searchBarPlaceholder = "Search recipes"
@@ -41,6 +46,20 @@ final class DishesViewController: UIViewController {
             static let messageLabel = "Add interesting recipes to make ordering products\nconvenient"
         }
     }
+
+    let categoriesMap: [String: String] = [
+        "Salad": "Салатов",
+        "Soup": "Супов",
+        "Chicken": "Курицы",
+        "Meat": "Мяса",
+        "Fish": "Рыбы",
+        "SideDish": "Гарниров",
+        "Drinks": "Напитков",
+        "Pancake": "Блинов",
+        "Desserts": "Десертов"
+    ]
+
+    let fileManager = FileManager.default
 
     // MARK: - Visual Components
 
@@ -91,6 +110,8 @@ final class DishesViewController: UIViewController {
     // MARK: - Public Properties
 
     var presenter: DishesPresenterProtocol?
+    var fileManagerService: FileManagerService?
+    var dishDetail: DishDetail?
 
     // MARK: - Private Properties
 
@@ -109,6 +130,7 @@ final class DishesViewController: UIViewController {
     private var infoState: InfoStates = .loading
     private var category: Category?
     private var dishes: [Dish]?
+    private var dishesUri: String?
     private var filteredByTimeDishes: [Dish] = []
     private var filteredByColoriesDishes: [Dish] = []
     private var isFilteredByTyme = false
@@ -118,13 +140,25 @@ final class DishesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.fetchCategory()
+        presenter?.fetchDishes()
         setupNavigationBar()
         setupSubviews()
         configureSubviews()
         setupColoriesSortingItem()
         setupTimeSortingItem()
         setupSortingItemsAction()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.fetchDishes()
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: makeContent(
+                from: Constants.Texts.content,
+                category: category
+            )
+        )
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -225,6 +259,21 @@ final class DishesViewController: UIViewController {
         configureTableViewConstraints()
         configureNoDishesStackViewConstraints()
         configureSearchBarConstraints()
+    }
+
+    private func makeContent(
+        from startContent: String,
+        category: Category?
+    ) -> String {
+        let resultCategoryName = category
+            .flatMap { categoriesMap[$0.categoryName] } ?? ""
+        let result = startContent + (
+            resultCategoryName.isEmpty
+                ? ""
+                : " \(resultCategoryName)"
+        )
+
+        return result
     }
 
     private func setupSortingItemsAction() {
@@ -516,8 +565,6 @@ extension DishesViewController: UITableViewDataSource {
 
             if let data = dishes {
                 cell.configureCell(info: data[indexPath.row])
-            } else if let data = category?.dishes {
-                cell.configureCell(info: data[indexPath.row])
             } else {
                 return UITableViewCell()
             }
@@ -531,17 +578,20 @@ extension DishesViewController: UITableViewDataSource {
 extension DishesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let dishes = category?.dishes else { return }
-        presenter?.moveToDishesDetail(data: dishes[indexPath.row])
+
+        guard let dishesDetailUri = dishes?[indexPath.row].uri else { return }
+        presenter?.fetchDishDetailes(uri: dishesDetailUri)
     }
 }
 
 // MARK: - DishesViewController + DishesViewControllerProtocol
 
 extension DishesViewController: DishesViewControllerProtocol {
-    func getCategory(_ category: Category) {
-        self.category = category
-        dishes = category.dishes
+    func updateDishes(_ dishes: [Dish]) {
+        DispatchQueue.main.async {
+            self.dishes = dishes
+            self.tableView.reloadData()
+        }
     }
 
     func updateState(sender: CustomControlView) {
@@ -570,26 +620,26 @@ extension DishesViewController: DishesViewControllerProtocol {
         setupTime(for: timeControlCurrentState)
         switch timeControlCurrentState {
         case .none:
-            guard let category = category else { return }
-            dishes = category.dishes
+            // guard let category = category else { return }
+            // dishes = category.dishes
             isFilteredByTyme = false
             tableView.reloadData()
         case .lowToHigh:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByColories {
                 dishes = filteredByColoriesDishes.sorted { $0.cookTime < $1.cookTime }
             } else {
-                dishes = category.dishes.sorted { $0.cookTime < $1.cookTime }
+                // dishes = category.dishes.sorted { $0.cookTime < $1.cookTime }
             }
             filteredByTimeDishes = dishes ?? []
             tableView.reloadData()
             isFilteredByTyme = true
         case .highToLow:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByColories {
                 dishes = filteredByColoriesDishes.sorted { $0.cookTime < $1.cookTime }
             } else {
-                dishes = category.dishes.sorted { $0.cookTime > $1.cookTime }
+                //  dishes = category.dishes.sorted { $0.cookTime > $1.cookTime }
             }
             filteredByTimeDishes = dishes ?? []
             isFilteredByTyme = true
@@ -604,21 +654,21 @@ extension DishesViewController: DishesViewControllerProtocol {
             isFilteredByColories = false
             tableView.reloadData()
         case .lowToHigh:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByTyme {
                 dishes = filteredByTimeDishes.sorted { $0.totalWeight < $1.totalWeight }
             } else {
-                dishes = category.dishes.sorted { $0.totalWeight < $1.totalWeight }
+                //  dishes = category.dishes.sorted { $0.totalWeight < $1.totalWeight }
             }
             filteredByColoriesDishes = dishes ?? []
             isFilteredByColories = true
             tableView.reloadData()
         case .highToLow:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByTyme {
                 dishes = filteredByTimeDishes.sorted { $0.totalWeight < $1.totalWeight }
             } else {
-                dishes = category.dishes.sorted { $0.totalWeight > $1.totalWeight }
+                // dishes = category.dishes.sorted { $0.totalWeight > $1.totalWeight }
             }
             filteredByColoriesDishes = dishes ?? []
             isFilteredByColories = true
@@ -631,7 +681,7 @@ extension DishesViewController: DishesViewControllerProtocol {
 
 extension DishesViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        presenter?.fetchCategory()
+        presenter?.fetchDishes()
 
         switch searchText.count {
         case 0:

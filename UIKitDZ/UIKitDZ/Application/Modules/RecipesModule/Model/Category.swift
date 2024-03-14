@@ -9,6 +9,6 @@ struct Category {
     let categoryName: String
     // картинка для категории
     let categoryImageName: String
-    // массив блюд для данной категории
-    let dishes: [Dish]
+//    // массив блюд для данной категории
+//    let dishes: [Dish]
 }

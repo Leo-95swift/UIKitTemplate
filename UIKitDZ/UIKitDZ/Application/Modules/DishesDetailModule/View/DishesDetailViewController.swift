@@ -6,7 +6,7 @@ import UIKit
 /// Интерфейс взаимодействия с view
 protocol DishesDetailViewControllerProtocol: AnyObject {
     /// Обновляет данные у вью
-    func updateData(_ data: Dish)
+    func updateData(_ data: DishDetail)
     /// Закрывает текущий экран
     func showAlert()
     /// Показывает активити контроллер
@@ -27,6 +27,10 @@ final class DishesDetailViewController: UIViewController {
         }
 
         enum Texts {
+            static let navigationTxt = "navigations.txt"
+            static let sharingTxt = "sharings.txt"
+            static let navigationContent = "Пользователь открыл Экран деталей блюд"
+            static let sharingContent = "Пользователь поделился рецептом из"
             static let verdanaFont = "Verdana"
             static let verdanaBoldFont = "Verdana-Bold"
             static let alertTitle = "Функционал в разработке"
@@ -70,11 +74,18 @@ final class DishesDetailViewController: UIViewController {
     // MARK: - Public Properties
 
     var presenter: DishesDetailPresenterProtocol?
+    var fileManagerService: FileManagerService?
 
     // MARK: - Private Properties
 
-    private let cellTypes: [DishesDetailCellType] = [.dishImageItem, .nutrients, .dishRecipe]
-    private var dish: Dish?
+    private let cellTypes: [DishesDetailCellType] = [
+        .dishImageItem,
+        .nutrients,
+        .dishRecipe
+    ]
+
+    private var dishDetail: DishDetail?
+    var isFavoriteDish = false
 
     // MARK: - Life Cycle
 
@@ -84,6 +95,15 @@ final class DishesDetailViewController: UIViewController {
         setupNavigationBar()
         setupSubviews()
         configureTableViewConstraints()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.fetchDish()
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.navigationTxt,
+            content: Constants.Texts.navigationContent
+        )
     }
 
     // MARK: - Private Methodes
@@ -100,9 +120,35 @@ final class DishesDetailViewController: UIViewController {
     }
 
     private func setupActivityController() {
-        guard let recipeText = dish?.recipe else { return }
-        let activityController = UIActivityViewController(activityItems: [recipeText], applicationActivities: nil)
+        guard let recipeText = dishDetail?.label else { return }
+        let activityController = UIActivityViewController(
+            activityItems: [recipeText],
+            applicationActivities: nil
+        )
         present(activityController, animated: true)
+    }
+
+    private func updateFavoriteButton(isFavorite: Bool) {
+        let addToFavoritesButton = navigationItem.rightBarButtonItem?.customView?.subviews
+            .compactMap { $0 as? UIButton }
+            .first { $0.tag == 2 }
+
+        let favoriteButtonImage: UIImage = isFavorite
+            ? .isFavoriteSelected
+            : .isFavoriteNotSelected
+
+        addToFavoritesButton?.setImage(
+            favoriteButtonImage,
+            for: .normal
+        )
+
+        navigationController?.navigationBar.layoutIfNeeded()
+    }
+
+    private func checkIsDishInFavorites(_ dish: DishDetail) {
+        isFavoriteDish = FavoritesDataManager.shared.sharedDataMap
+            .map(\.value)
+            .contains(where: { $0.dishName == dish.label })
     }
 }
 
@@ -121,7 +167,7 @@ extension DishesDetailViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let safeDish = dish else { return UITableViewCell() }
+        guard let safeDish = dishDetail else { return UITableViewCell() }
         let cellType = cellTypes[indexPath.section]
         switch cellType {
         case .dishImageItem:
@@ -174,9 +220,12 @@ extension DishesDetailViewController: UITableViewDelegate {
 // MARK: - DishesDetailViewController + DishesDetailViewControllerProtocol
 
 extension DishesDetailViewController: DishesDetailViewControllerProtocol {
-    func updateData(_ data: Dish) {
-        dish = data
-        dishNameLabel.text = dish?.dishName
+    func updateData(_ data: DishDetail) {
+        dishDetail = data
+        dishNameLabel.text = dishDetail?.label
+        guard let dishDetail = dishDetail else { return }
+        checkIsDishInFavorites(dishDetail)
+        updateFavoriteButton(isFavorite: isFavoriteDish)
     }
 
     func showAlert() {
@@ -203,7 +252,19 @@ extension DishesDetailViewController {
         )
 
         let addToFavoritesButton = UIButton(type: .custom)
-        addToFavoritesButton.setImage(.addToFavorites, for: .normal)
+        addToFavoritesButton.tag = 2
+
+        guard let dish = dishDetail else { return }
+        checkIsDishInFavorites(dish)
+
+        let favoriteButtonImage: UIImage = isFavoriteDish
+            ? .isFavoriteSelected
+            : .isFavoriteNotSelected
+
+        addToFavoritesButton.setImage(
+            favoriteButtonImage,
+            for: .normal
+        )
         addToFavoritesButton.contentMode = .scaleAspectFill
         addToFavoritesButton.addTarget(
             self,
@@ -347,10 +408,18 @@ extension DishesDetailViewController {
     }
 
     @objc private func didTapShareButton() {
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.sharingTxt,
+            content: Constants.Texts.sharingContent
+        )
         presenter?.showActivityController()
     }
 
     @objc private func didTapAddToFavoritesButton() {
-        presenter?.showAlert()
+        guard let dishDetail = dishDetail else { return }
+        // presenter?.updateStateForDish(dishDetail)
+
+        checkIsDishInFavorites(dishDetail)
+        updateFavoriteButton(isFavorite: isFavoriteDish)
     }
 }

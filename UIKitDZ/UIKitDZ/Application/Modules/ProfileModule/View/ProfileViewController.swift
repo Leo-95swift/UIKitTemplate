@@ -24,9 +24,17 @@ final class ProfileViewController: UIViewController {
         static let cancelActionTitle = "Cancel"
         static let okActionTextTitle = "Ok"
         static let alertLogoutTitle = "Are you sure you want to\nlog out?"
+        static let defaultUserName = "Surname Name"
+        static let defaultProfileImageName = "profileAvatarImage"
         static let cardViewHeightMultiplier = 0.9
         static let cardHandleAreaHeight: CGFloat = 150
         static let cardViewCornerRadius: CGFloat = 30
+
+        enum Texts {
+            static let txt = "navigations.txt"
+            static let content = "Пользователь открыл Экран профиля"
+            static let defaultUsername = "Name SurName"
+        }
     }
 
     enum CardState {
@@ -34,6 +42,7 @@ final class ProfileViewController: UIViewController {
         case collapsed
     }
 
+    private let caretaker = Caretaker()
     private let termsOfUseStorage = TermsOfUseStorage()
 
     // MARK: - Visual Components
@@ -52,6 +61,7 @@ final class ProfileViewController: UIViewController {
     // MARK: Public Properties
 
     var presenter: ProfilePresenterProtocol?
+    var fileManagerService: FileManagerService?
     var passTextToCellHandler: StringHandler?
 
     // MARK: - Private Properties
@@ -66,6 +76,9 @@ final class ProfileViewController: UIViewController {
 
     private var runningAnimations: [UIViewPropertyAnimator] = []
     private var animationProggresWhenInterrupted: CGFloat = 0
+    private var defaultUserName = Constants.defaultUserName
+    private var defaultProfileImageName = Constants.defaultProfileImageName
+    private var profileImage: UIImage?
 
     // MARK: - Life Cycle
 
@@ -74,6 +87,16 @@ final class ProfileViewController: UIViewController {
         setupSubviews()
         setupNavigationBar()
         setupTableViewConstraints()
+        fetchUserInfo()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fetchUserInfo()
+        fileManagerService?.sendInfoToDirectory(
+            txtFileName: Constants.Texts.txt,
+            content: Constants.Texts.content
+        )
     }
 
     override func viewDidLayoutSubviews() {
@@ -142,6 +165,76 @@ final class ProfileViewController: UIViewController {
             panGestureRecognizer
         )
     }
+
+    private func fetchUserInfo() {
+        if let userData = caretaker.loadUserData(for: Login.login) {
+            print(userData)
+            if let userName = userData.userName {
+                defaultUserName = userName
+            }
+            if let profileImageName = userData.imageName {
+                defaultProfileImageName = profileImageName
+                profileImage = UIImage(contentsOfFile: profileImageName)
+            }
+            tableView.reloadData()
+        }
+    }
+
+    func saveImageToFileSystem(_ image: UIImage, quality: CGFloat = 1.0) -> URL? {
+        guard let imageData = image.jpegData(compressionQuality: quality) else { return nil }
+
+        let fileManager = FileManager.default
+        guard let documentsDirectory = fileManager.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first else {
+            return URL(string: "")
+        }
+        let fileName = UUID().uuidString + ".jpeg"
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+
+        do {
+            try imageData.write(to: fileURL)
+            return fileURL
+        } catch {
+            print("Error saving image: \(error)")
+            return nil
+        }
+    }
+
+    private func updateUserInfo(
+        with userName: String?,
+        profileImageName: String?
+    ) {
+        if let userData = caretaker.loadUserData(for: Login.login) {
+            let name = userName == nil && userData.userName == nil
+                ? defaultUserName
+                : userName == nil ? userData.userName : userName
+
+            let imageName = profileImageName == nil && userData.imageName == nil
+                ? defaultProfileImageName
+                : profileImageName == nil ? userData.imageName : profileImageName
+
+            let updatedUserData = UserData(
+                userName: name,
+                login: userData.login,
+                password: userData.password,
+                imageName: imageName
+            )
+            do {
+                try caretaker.saveUserData(updatedUserData, key: Login.login)
+            } catch {}
+        }
+    }
+
+    // private func nameFromImage
+
+    @objc func imagePickerTapped() {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.sourceType = .photoLibrary
+        present(imagePickerController, animated: true, completion: nil)
+    }
 }
 
 // MARK: - ProfileViewController + UITableViewDataSource
@@ -175,8 +268,31 @@ extension ProfileViewController: UITableViewDataSource {
             cell.showAlert = { [weak self] in
                 self?.presenter?.showNameChangeAlert()
             }
+            cell.onImageTap = { [weak self] in
+                guard let self else { return }
+                self.imagePickerTapped()
+            }
+            if defaultProfileImageName != Constants.defaultProfileImageName {
+                if let image = UIImage(contentsOfFile: defaultProfileImageName) {
+                    cell.changeUserAvatar(image: image)
+                }
+            }
+
+            if let profileImage = profileImage {
+                cell.changeUserAvatar(image: profileImage)
+            }
+
+            if let newUserName = caretaker.loadUserData(
+                for: Login.login
+            )?.userName {
+                cell.changeUserName(text: newUserName)
+            }
             passTextToCellHandler = { text in
                 cell.changeUserName(text: text)
+                self.updateUserInfo(
+                    with: text,
+                    profileImageName: nil
+                )
             }
             return cell
         case .bonuses:
@@ -239,8 +355,14 @@ extension ProfileViewController: ProfileViewControllerProtocol {
         let alert = UIAlertController(title: Constants.alertChangeNameTitle, message: nil, preferredStyle: .alert)
         alert.addTextField { textField in
             textField.placeholder = Constants.alertTextFieldPlaceholder
-            let cancelAction = UIAlertAction(title: Constants.cancelActionTitle, style: .cancel)
-            let okAction = UIAlertAction(title: Constants.okActionTextTitle, style: .default) { [weak self] _ in
+            let cancelAction = UIAlertAction(
+                title: Constants.cancelActionTitle,
+                style: .cancel
+            )
+            let okAction = UIAlertAction(
+                title: Constants.okActionTextTitle,
+                style: .default
+            ) { [weak self] _ in
                 let userText = alert.textFields?.first?.text
                 self?.passTextToCellHandler?(userText ?? "blank")
             }
@@ -251,9 +373,19 @@ extension ProfileViewController: ProfileViewControllerProtocol {
     }
 
     func showLogoutAlert() {
-        let alert = UIAlertController(title: Constants.alertLogoutTitle, message: nil, preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: Constants.cancelActionTitle, style: .cancel)
-        let okAction = UIAlertAction(title: Constants.okActionTextTitle, style: .default) { [weak self] _ in
+        let alert = UIAlertController(
+            title: Constants.alertLogoutTitle,
+            message: nil,
+            preferredStyle: .alert
+        )
+        let cancelAction = UIAlertAction(
+            title: Constants.cancelActionTitle,
+            style: .cancel
+        )
+        let okAction = UIAlertAction(
+            title: Constants.okActionTextTitle,
+            style: .default
+        ) { [weak self] _ in
             self?.presenter?.logout()
         }
         alert.addAction(cancelAction)
@@ -344,5 +476,29 @@ extension ProfileViewController {
                 durationFactor: 0
             )
         }
+    }
+}
+
+/// расширение для использования галерии чтобы поменять фото профиля
+extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            if let fileURL = saveImageToFileSystem(pickedImage) {
+                defaultProfileImageName = fileURL.path
+            }
+            updateUserInfo(
+                with: nil,
+                profileImageName: defaultProfileImageName
+            )
+            tableView.reloadData()
+        }
+        dismiss(animated: true, completion: nil)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 }

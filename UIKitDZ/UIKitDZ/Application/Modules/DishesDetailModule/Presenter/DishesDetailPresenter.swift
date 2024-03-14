@@ -11,6 +11,8 @@ protocol DishesDetailPresenterProtocol {
     func moveToDishes()
     /// Просит презентера показать алерт
     func showAlert()
+    /// Просит презентера добавить блюдо в избранное
+    func updateStateForDish(_ dish: Dish)
     /// Просит презентера показать активити контроллер
     func showActivityController()
 }
@@ -21,14 +23,14 @@ final class DishesDetailPresenter {
 
     private weak var view: DishesDetailViewControllerProtocol?
     private weak var recipesCoordinator: RecipesCoordinator?
-    private var data: Dish
+    private var data: DishDetail
 
     // MARK: - Initializers
 
     init(
         view: DishesDetailViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        data: Dish
+        data: DishDetail
     ) {
         self.view = view
         recipesCoordinator = coordinator
@@ -53,5 +55,12 @@ extension DishesDetailPresenter: DishesDetailPresenterProtocol {
 
     func showActivityController() {
         view?.showActivityController()
+    }
+
+    func updateStateForDish(_ dish: Dish) {
+//        FavoritesDataManager.shared.updateStateForDish(
+//            dish.dishName,
+//            dish: dish
+//        )
     }
 }
