@@ -55,7 +55,8 @@ final class AppBuilder {
         let dishesPresenter = DishesPresenter(
             view: view,
             coordinator: coordinator,
-            networkService: networkService
+            networkService: networkService,
+            categoty: data
         )
         view.presenter = dishesPresenter
         view.fileManagerService = fileManaerService

@@ -134,9 +134,25 @@ final class DishImageTableViewCell: UITableViewCell {
     // MARK: - Public Methods
 
     func configure(data: DishDetail) {
-        dishImageView.getImage(from: data.images)
+        loadImage(with: data.images, imageID: data.label)
         totalWeightLabel.text = roundAndConvertToString(data.totalWeight) + " g"
         cookingTimeMinutesLabel.text = "\(data.totalTime) min"
+    }
+
+    private func loadImage(with stringURL: String, imageID: String) {
+        let imageService = LoadImageService()
+        let proxy = Proxy(service: imageService)
+
+        guard let url = URL(string: stringURL) else { return }
+        proxy.loadImage(url: url, imageId: imageID) { [weak self] data, _, _ in
+            guard let self = self,
+                  let data = data
+            else { return }
+
+            DispatchQueue.main.async {
+                self.dishImageView.image = UIImage(data: data)
+            }
+        }
     }
 
     // MARK: - Private Methods

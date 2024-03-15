@@ -11,6 +11,8 @@ protocol DishesViewControllerProtocol: AnyObject {
     func updateCaloriesView()
     /// Обновляет UI  у кнопки сортировки по времени
     func updateTimeView()
+    /// Обновляет название категории
+    func updateCategory(category: Category)
 }
 
 /// Экран для показа блюд
@@ -141,9 +143,9 @@ final class DishesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationBar()
         setupSubviews()
         configureSubviews()
+        presenter?.fetchCategory()
         setupColoriesSortingItem()
         setupTimeSortingItem()
         setupSortingItemsAction()
@@ -152,7 +154,9 @@ final class DishesViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        presenter?.fetchCategory()
         presenter?.updateDishes()
+        setupNavigationBar()
         fileManagerService?.sendInfoToDirectory(
             txtFileName: Constants.Texts.txt,
             content: makeContent(
@@ -264,7 +268,7 @@ final class DishesViewController: UIViewController {
         )
         refreshControl.addTarget(
             self,
-            action: #selector(refreshDishDetailData(_:)),
+            action: #selector(refreshDishesData(_:)),
             for: .valueChanged
         )
         tableView.refreshControl = refreshControl
@@ -666,7 +670,7 @@ extension DishesViewController: DishesViewControllerProtocol {
             } else {
                 // dishes = category.dishes.sorted { $0.cookTime < $1.cookTime }
             }
-            filteredByTimeDishes = dishes ?? []
+            filteredByTimeDishes = dishes
             tableView.reloadData()
             isFilteredByTyme = true
         case .highToLow:
@@ -676,7 +680,7 @@ extension DishesViewController: DishesViewControllerProtocol {
             } else {
                 //  dishes = category.dishes.sorted { $0.cookTime > $1.cookTime }
             }
-            filteredByTimeDishes = dishes ?? []
+            filteredByTimeDishes = dishes
             isFilteredByTyme = true
             tableView.reloadData()
         }
@@ -695,7 +699,7 @@ extension DishesViewController: DishesViewControllerProtocol {
             } else {
                 //  dishes = category.dishes.sorted { $0.totalWeight < $1.totalWeight }
             }
-            filteredByColoriesDishes = dishes ?? []
+            filteredByColoriesDishes = dishes
             isFilteredByColories = true
             tableView.reloadData()
         case .highToLow:
@@ -705,10 +709,14 @@ extension DishesViewController: DishesViewControllerProtocol {
             } else {
                 // dishes = category.dishes.sorted { $0.totalWeight > $1.totalWeight }
             }
-            filteredByColoriesDishes = dishes ?? []
+            filteredByColoriesDishes = dishes
             isFilteredByColories = true
             tableView.reloadData()
         }
+    }
+
+    func updateCategory(category: Category) {
+        self.category = category
     }
 }
 

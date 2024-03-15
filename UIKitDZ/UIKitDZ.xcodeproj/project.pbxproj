@@ -63,6 +63,9 @@
 		01C7A13C2BA33270006185DE /* DishHitDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A13B2BA3326F006185DE /* DishHitDTO.swift */; };
 		01C7A13E2BA332FB006185DE /* ImagesDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A13D2BA332FB006185DE /* ImagesDTO.swift */; };
 		01C7A1402BA33316006185DE /* LargeDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A13F2BA33316006185DE /* LargeDTO.swift */; };
+		01C7A1432BA43B89006185DE /* LoadServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1422BA43B89006185DE /* LoadServiceProtocol.swift */; };
+		01C7A1452BA43BDB006185DE /* LoadImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1442BA43BDB006185DE /* LoadImageService.swift */; };
+		01C7A1472BA43C7B006185DE /* Proxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1462BA43C7B006185DE /* Proxy.swift */; };
 		01C8DD4A2B909D7700356868 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD492B909D7700356868 /* Category.swift */; };
 		01C8DD4C2B909D9F00356868 /* Dish.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD4B2B909D9F00356868 /* Dish.swift */; };
 		01C8DD4E2B909DC000356868 /* Nutrients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C8DD4D2B909DC000356868 /* Nutrients.swift */; };
@@ -169,6 +172,9 @@
 		01C7A13B2BA3326F006185DE /* DishHitDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishHitDTO.swift; sourceTree = "<group>"; };
 		01C7A13D2BA332FB006185DE /* ImagesDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesDTO.swift; sourceTree = "<group>"; };
 		01C7A13F2BA33316006185DE /* LargeDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeDTO.swift; sourceTree = "<group>"; };
+		01C7A1422BA43B89006185DE /* LoadServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadServiceProtocol.swift; sourceTree = "<group>"; };
+		01C7A1442BA43BDB006185DE /* LoadImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadImageService.swift; sourceTree = "<group>"; };
+		01C7A1462BA43C7B006185DE /* Proxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Proxy.swift; sourceTree = "<group>"; };
 		01C8DD492B909D7700356868 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		01C8DD4B2B909D9F00356868 /* Dish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dish.swift; sourceTree = "<group>"; };
 		01C8DD4D2B909DC000356868 /* Nutrients.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nutrients.swift; sourceTree = "<group>"; };
@@ -534,6 +540,7 @@
 			isa = PBXGroup;
 			children = (
 				01C7A0F92BA088F6006185DE /* NetworkService */,
+				01C7A1412BA43B48006185DE /* LoadImageService */,
 				012777542B99DF6400FFB55E /* CaretakerService */,
 				012777602B9A285800FFB55E /* FileManagerService */,
 			);
@@ -598,6 +605,16 @@
 				01C7A12D2BA224D9006185DE /* TotalDTO.swift */,
 			);
 			path = DishesDetailDTO;
+			sourceTree = "<group>";
+		};
+		01C7A1412BA43B48006185DE /* LoadImageService */ = {
+			isa = PBXGroup;
+			children = (
+				01C7A1422BA43B89006185DE /* LoadServiceProtocol.swift */,
+				01C7A1442BA43BDB006185DE /* LoadImageService.swift */,
+				01C7A1462BA43C7B006185DE /* Proxy.swift */,
+			);
+			path = LoadImageService;
 			sourceTree = "<group>";
 		};
 		01C8DD482B909D5C00356868 /* Model */ = {
@@ -937,6 +954,7 @@
 				8B6560E42BA3E4E000B6B98F /* ErrorTableViewCell.swift in Sources */,
 				01C7A1112BA0CACA006185DE /* SideDishes.swift in Sources */,
 				01C7A13C2BA33270006185DE /* DishHitDTO.swift in Sources */,
+				01C7A1472BA43C7B006185DE /* Proxy.swift in Sources */,
 				0124FA482B8DBE5B008BCA1E /* FavoritesCoordinator.swift in Sources */,
 				0124F9DE2B8CBF0F008BCA1E /* TabBarController.swift in Sources */,
 				8B6560E02BA3CF3E00B6B98F /* URLSession+Extension.swift in Sources */,
@@ -952,6 +970,7 @@
 				01C8DD502B909F6000356868 /* CategoriesStorage.swift in Sources */,
 				8BD1F8E02B90300A0053F19B /* BonusInfo.swift in Sources */,
 				01C7A1052BA0CA24006185DE /* Recipes.swift in Sources */,
+				01C7A1452BA43BDB006185DE /* LoadImageService.swift in Sources */,
 				0124F9EA2B8CC19E008BCA1E /* ProfileViewController.swift in Sources */,
 				01C7A1072BA0CA3F006185DE /* DrinkDishes.swift in Sources */,
 				0124FA442B8DBB14008BCA1E /* ProfilePresenter.swift in Sources */,
@@ -980,6 +999,7 @@
 				01C7A10D2BA0CA93006185DE /* PancakeDishes.swift in Sources */,
 				0124F9EC2B8CC1BC008BCA1E /* RecipesViewController.swift in Sources */,
 				0124FA402B8DB8DB008BCA1E /* RecipesPresenter.swift in Sources */,
+				01C7A1432BA43B89006185DE /* LoadServiceProtocol.swift in Sources */,
 				0124F9F02B8CC20D008BCA1E /* BonusViewController.swift in Sources */,
 				01C7A1152BA189C3006185DE /* DishDetailDTO.swift in Sources */,
 				01C8DD712B931BCF00356868 /* DishesDetailViewController.swift in Sources */,
