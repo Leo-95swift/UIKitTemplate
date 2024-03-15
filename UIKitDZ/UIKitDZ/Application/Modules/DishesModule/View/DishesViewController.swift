@@ -61,6 +61,8 @@ final class DishesViewController: UIViewController {
 
     // MARK: - Visual Components
 
+    private let refreshControl = UIRefreshControl()
+
     private let recipesSearchBar: UISearchBar = {
         let searchTextField = UISearchTextField()
         let searchBar = UISearchBar()
@@ -145,6 +147,7 @@ final class DishesViewController: UIViewController {
         setupColoriesSortingItem()
         setupTimeSortingItem()
         setupSortingItemsAction()
+        setupRefreshControl()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -253,6 +256,18 @@ final class DishesViewController: UIViewController {
         configureTableViewConstraints()
         configureNoDishesStackViewConstraints()
         configureSearchBarConstraints()
+    }
+
+    private func setupRefreshControl() {
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "Pull to refresh"
+        )
+        refreshControl.addTarget(
+            self,
+            action: #selector(refreshDishDetailData(_:)),
+            for: .valueChanged
+        )
+        tableView.refreshControl = refreshControl
     }
 
     private func makeContent(
@@ -502,6 +517,12 @@ final class DishesViewController: UIViewController {
 
     @objc private func updateTimeControlUI() {
         presenter?.updateTimeControlUI()
+    }
+
+    @objc private func refreshDishesData(_ sender: UIRefreshControl) {
+        presenter?.updateDishes()
+
+        sender.endRefreshing()
     }
 }
 
