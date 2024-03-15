@@ -25,10 +25,10 @@ final class RecipesCoordinator: BaseCoodinator {
         rootController?.pushViewController(dishesView, animated: true)
     }
 
-    func pushDishesDetailView(data: DishDetail) {
+    func pushDishesDetailView(uri: String) {
         let dishesDetailView = builder.makeDishesDetailModule(
             coordinator: self,
-            data: data
+            uri: uri
         )
         dishesDetailView.hidesBottomBarWhenPushed = true
         rootController?.pushViewController(dishesDetailView, animated: true)

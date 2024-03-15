@@ -5,8 +5,10 @@ import Foundation
 
 /// Протокол для общения с DishesDetailPresenter
 protocol DishesDetailPresenterProtocol {
+    /// Состояние загрузки данных
+    var state: ViewState<DishDetail> { get }
     /// просит презентера получить данные о блюде
-    func fetchDish()
+    func fetchDishDetails()
     /// Просит презентера вернуться на экран с категориями рецептов
     func moveToDishes()
     /// Просит презентера показать алерт
@@ -23,26 +25,44 @@ final class DishesDetailPresenter {
 
     private weak var view: DishesDetailViewControllerProtocol?
     private weak var recipesCoordinator: RecipesCoordinator?
-    private var data: DishDetail
+    private let networkService: NetworkServiceProtocol?
+    private var uri: String
+    var state: ViewState<DishDetail> = .loading {
+        didSet {
+            view?.updateState()
+        }
+    }
 
     // MARK: - Initializers
 
     init(
         view: DishesDetailViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        data: DishDetail
+        networkService: NetworkServiceProtocol,
+        uri: String
     ) {
         self.view = view
         recipesCoordinator = coordinator
-        self.data = data
+        self.networkService = networkService
+        self.uri = uri
     }
 }
 
 // MARK: - DishesDetailPresenter + DishesDetailPresenterProtocol
 
 extension DishesDetailPresenter: DishesDetailPresenterProtocol {
-    func fetchDish() {
-        view?.updateData(data)
+    func fetchDishDetails() {
+        state = .loading
+        networkService?.getDishesDetail(uri, completionHandler: { result in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                switch result {
+                case let .success(dishDetails):
+                    self.state = .data(dishDetails)
+                case let .failure(error):
+                    self.state = .error(error)
+                }
+            }
+        })
     }
 
     func moveToDishes() {

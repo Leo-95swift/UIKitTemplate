@@ -31,9 +31,9 @@ final class NetworkService: NetworkServiceProtocol {
         static let appKey = "2412c4c0d52ca924f6d6a486c1aa1ab6"
         static let appId = "a726fb9c"
         static let dishType = "dishType"
-    } /// by-uri{http://www.edamam.com/ontologies/edamam.owl#recipe_e074fb5e814ed30309780398e68c2b90}
-    ///
+    }
 
+    private var session = URLSession.shared
     private var component = URLComponents()
     private let scheme = Constants.scheme
     private let host = Constants.host
@@ -82,24 +82,25 @@ final class NetworkService: NetworkServiceProtocol {
 
         guard let url = component.url else { return }
         let request = URLRequest(url: url)
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error = error {
-                completionHandler(.failure(error))
-                return
-            }
-            if let data = data {
-                do {
-                    let allHits = try JSONDecoder().decode(RecipesHitsDTO.self, from: data)
-                    let hits = allHits.hits
-                    var recipes: [Dish] = []
-                    for hit in hits {
-                        recipes.append(Dish(dish: hit.recipe))
+        session.dataTask(with: request) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(data):
+                    do {
+                        let allHits = try JSONDecoder().decode(RecipesHitsDTO.self, from: data)
+                        let hits = allHits.hits
+                        var recipes: [Dish] = []
+                        for hit in hits {
+                            recipes.append(Dish(dish: hit.recipe))
+                        }
+                        completionHandler(.success(recipes))
+                        print(recipes)
+                    } catch {
+                        completionHandler(.failure(error))
+                        print(error.localizedDescription)
                     }
-                    completionHandler(.success(recipes))
-                    print(recipes)
-                } catch {
+                case let .failure(error):
                     completionHandler(.failure(error))
-                    print(error.localizedDescription)
                 }
             }
         }.resume()
@@ -116,20 +117,21 @@ final class NetworkService: NetworkServiceProtocol {
         component.queryItems?.append(contentsOf: urlQueryItemsDetail)
         guard let url = component.url else { return }
         let request = URLRequest(url: url)
-        URLSession.shared.dataTask(with: request) { data, _, error in
-            if let error = error {
-                completionHandler(.failure(error))
-                return
-            }
-            if let data = data {
-                do {
-                    let dishHitsDTO = try JSONDecoder().decode(DishHitsDTO.self, from: data)
-                    guard let result = dishHitsDTO.hits.first?.recipe
-                    else { return }
-                    let recipe = result
-                    let detail = DishDetail(dto: recipe)
-                    completionHandler(.success(detail))
-                } catch {
+        session.dataTask(with: request) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case let .success(data):
+                    do {
+                        let dishHitsDTO = try JSONDecoder().decode(DishHitsDTO.self, from: data)
+                        guard let result = dishHitsDTO.hits.first?.recipe
+                        else { return }
+                        let recipe = result
+                        let detail = DishDetail(dto: recipe)
+                        completionHandler(.success(detail))
+                    } catch {
+                        completionHandler(.failure(error))
+                    }
+                case let .failure(error):
                     completionHandler(.failure(error))
                 }
             }

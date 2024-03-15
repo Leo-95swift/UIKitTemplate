@@ -5,6 +5,8 @@ import UIKit
 
 /// Интерфейс взаимодействия с view
 protocol DishesDetailViewControllerProtocol: AnyObject {
+    /// Обновляет вью в зависимости от состояния
+    func updateState()
     /// Обновляет данные у вью
     func updateData(_ data: DishDetail)
     /// Закрывает текущий экран
@@ -63,6 +65,20 @@ final class DishesDetailViewController: UIViewController {
             DetailRecipeTableViewCell.self,
             forCellReuseIdentifier: DetailRecipeTableViewCell.Constants.identifier
         )
+        tableView.register(
+            DishImageShimmerTableViewCell.self,
+            forCellReuseIdentifier: DishImageShimmerTableViewCell.Constants.identifier
+        )
+        tableView.register(
+            NutrientsShimmerTableViewCell.self,
+            forCellReuseIdentifier: NutrientsShimmerTableViewCell.Constants.identifier
+        )
+        tableView.register(
+            DetailRecipeShimmerTableViewCell.self,
+            forCellReuseIdentifier: DetailRecipeShimmerTableViewCell.Constants.identifier
+        )
+        tableView.register(NoDataTableViewCell.self, forCellReuseIdentifier: NoDataTableViewCell.Constants.identifier)
+        tableView.register(ErrorTableViewCell.self, forCellReuseIdentifier: ErrorTableViewCell.Constants.identifier)
         tableView.allowsSelection = false
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
@@ -91,7 +107,6 @@ final class DishesDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.fetchDish()
         setupNavigationBar()
         setupSubviews()
         configureTableViewConstraints()
@@ -99,11 +114,16 @@ final class DishesDetailViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        presenter?.fetchDish()
+        presenter?.fetchDishDetails()
         fileManagerService?.sendInfoToDirectory(
             txtFileName: Constants.Texts.navigationTxt,
             content: Constants.Texts.navigationContent
         )
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableView.reloadData()
     }
 
     // MARK: - Private Methodes
@@ -156,40 +176,85 @@ final class DishesDetailViewController: UIViewController {
 
 extension DishesDetailViewController: UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        cellTypes.count
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch cellTypes[section] {
-        case .dishImageItem, .dishRecipe, .nutrients:
-            return 1
+        switch presenter?.state {
+        case .loading, .data:
+            cellTypes.count
+        default:
+            1
         }
     }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        switch presenter?.state {
+//        case .loading, .data:
+//            switch cellTypes[section] {
+//            case .dishImageItem, .dishRecipe, .nutrients:
+//                return 1
+//            }
+//        }
+        1
+    }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let safeDish = dishDetail else { return UITableViewCell() }
-        let cellType = cellTypes[indexPath.section]
-        switch cellType {
-        case .dishImageItem:
+        switch presenter?.state {
+        case .loading:
+            let cellType = cellTypes[indexPath.section]
+            switch cellType {
+            case .dishImageItem:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: DishImageShimmerTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? DishImageShimmerTableViewCell else { return UITableViewCell() }
+                return cell
+            case .nutrients:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: NutrientsShimmerTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? NutrientsShimmerTableViewCell else { return UITableViewCell() }
+                return cell
+            case .dishRecipe:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: DetailRecipeShimmerTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? DetailRecipeShimmerTableViewCell else { return UITableViewCell() }
+                return cell
+            }
+        case let .data(dishDetails):
+            let cellType = cellTypes[indexPath.section]
+            switch cellType {
+            case .dishImageItem:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: DishImageTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? DishImageTableViewCell else { return UITableViewCell() }
+                cell.configure(data: dishDetails)
+                return cell
+            case .nutrients:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: NutrientsTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? NutrientsTableViewCell else { return UITableViewCell() }
+                cell.configure(data: dishDetails)
+                return cell
+            case .dishRecipe:
+                guard let cell = tableView.dequeueReusableCell(
+                    withIdentifier: DetailRecipeTableViewCell.Constants.identifier,
+                    for: indexPath
+                ) as? DetailRecipeTableViewCell else { return UITableViewCell() }
+                cell.configure(data: dishDetails)
+                return cell
+            }
+        case .noData:
             guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: DishImageTableViewCell.Constants.identifier,
+                withIdentifier: NoDataTableViewCell.Constants.identifier,
                 for: indexPath
-            ) as? DishImageTableViewCell else { return UITableViewCell() }
-            cell.configure(data: safeDish)
+            ) as? NoDataTableViewCell else { return UITableViewCell() }
             return cell
-        case .nutrients:
+        case .error, .none:
             guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: NutrientsTableViewCell.Constants.identifier,
+                withIdentifier: ErrorTableViewCell.Constants.identifier,
                 for: indexPath
-            ) as? NutrientsTableViewCell else { return UITableViewCell() }
-            cell.configure(data: safeDish)
-            return cell
-        case .dishRecipe:
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: DetailRecipeTableViewCell.Constants.identifier,
-                for: indexPath
-            ) as? DetailRecipeTableViewCell else { return UITableViewCell() }
-            cell.configure(data: safeDish)
+            ) as? ErrorTableViewCell else { return UITableViewCell() }
             return cell
         }
     }
@@ -198,6 +263,17 @@ extension DishesDetailViewController: UITableViewDataSource {
 // MARK: - DishesDetailViewController + UITableViewDelegate
 
 extension DishesDetailViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch presenter?.state {
+        case .loading:
+            return UITableView.automaticDimension
+        case .data:
+            return UITableView.automaticDimension
+        case .noData, .error, .none:
+            return 520
+        }
+    }
+
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         switch cellTypes[section] {
         case .dishImageItem:
@@ -220,6 +296,10 @@ extension DishesDetailViewController: UITableViewDelegate {
 // MARK: - DishesDetailViewController + DishesDetailViewControllerProtocol
 
 extension DishesDetailViewController: DishesDetailViewControllerProtocol {
+    func updateState() {
+        tableView.reloadData()
+    }
+
     func updateData(_ data: DishDetail) {
         dishDetail = data
         dishNameLabel.text = dishDetail?.label

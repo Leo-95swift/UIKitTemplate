@@ -38,7 +38,6 @@ final class DishImageTableViewCell: UITableViewCell {
         let view = UIView()
         view.layer.cornerRadius = 46
         view.clipsToBounds = true
-        view.backgroundColor = .yellow
         return view
     }()
 
@@ -46,7 +45,6 @@ final class DishImageTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 0
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "dish6")
         return imageView
     }()
 
