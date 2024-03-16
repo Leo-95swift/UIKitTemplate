@@ -1,11 +1,61 @@
 // FileManagerService.swift
 // Copyright © RoadMap. All rights reserved.
 
-import Foundation
+import UIKit
 
 /// Сервиз для управления хранением данных
 final class FileManagerService {
     let fileManager = FileManager.default
+
+    func fetchImageFromDirectory(with imageName: String) -> UIImage? {
+        guard let documentsDirectory = fileManager.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first else {
+            print("Не удалось получить путь к директории документов")
+            return nil
+        }
+
+        let fileURL = documentsDirectory.appendingPathComponent(imageName)
+
+        if fileManager.fileExists(atPath: fileURL.path) {
+            if let imageData = try? Data(contentsOf: fileURL), let image = UIImage(data: imageData) {
+                return image
+            } else {
+                print("Не удалось создать изображение из данных файла")
+                return nil
+            }
+        } else {
+            print("Файл с именем \(imageName) не найден")
+            return nil
+        }
+    }
+
+    func sendImageToDirectory(imageURL: URL, imageName: String) {
+        guard let documentsDirectory = fileManager.urls(
+            for: .documentDirectory,
+            in: .userDomainMask
+        ).first
+        else {
+            print("Не удалось получить путь к директории документов")
+            return
+        }
+
+        let fileURL = documentsDirectory.appendingPathComponent(imageName)
+
+        if fileManager.fileExists(atPath: fileURL.path) {
+            print("Файл с именем \(imageName) уже существует.")
+            return
+        } else {
+            do {
+                let imageData = try Data(contentsOf: imageURL)
+                try imageData.write(to: fileURL, options: .atomic)
+                print("Изображение было успешно сохранено.")
+            } catch {
+                print("Ошибка при сохранении изображения: \(error)")
+            }
+        }
+    }
 
     func sendInfoToDirectory(txtFileName: String, content: String) {
         guard let documentsDirectory = fileManager.urls(
@@ -16,7 +66,6 @@ final class FileManagerService {
         }
 
         let fileURL = documentsDirectory.appendingPathComponent(txtFileName)
-        print("aaa \(fileURL.path())")
         do {
             if fileManager.fileExists(atPath: fileURL.path) {
                 let existingContentData = try Data(contentsOf: fileURL)
@@ -37,7 +86,6 @@ final class FileManagerService {
                     contents: contentData,
                     attributes: nil
                 )
-                print(" documentDirectory is \(documentsDirectory.path)")
             }
         } catch {
             print("Ошибка при работе с файлом: \(error)")

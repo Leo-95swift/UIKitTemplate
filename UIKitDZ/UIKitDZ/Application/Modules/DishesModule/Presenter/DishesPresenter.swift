@@ -23,6 +23,8 @@ protocol DishesPresenterProtocol {
     func passUriToDishDetail(uri: String)
     /// Просит презентера получить данные о блюдах с сервера
     func updateDishes()
+    /// Просит презентера получить данные о названии категории
+    func fetchCategory()
 }
 
 /// Presenter для страницы рецептов
@@ -33,6 +35,7 @@ final class DishesPresenter {
     private weak var recipesCoordinator: RecipesCoordinator?
     let networkService: NetworkServiceProtocol?
     var dishes: [Dish] = []
+    var category: Category
     private var dishDetail: DishDetail?
     var state: ViewState<[Dish]> = .noData {
         didSet {
@@ -45,11 +48,13 @@ final class DishesPresenter {
     init(
         view: DishesViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        networkService: NetworkServiceProtocol
+        networkService: NetworkServiceProtocol,
+        categoty: Category
     ) {
         self.view = view
         recipesCoordinator = coordinator
         self.networkService = networkService
+        category = categoty
     }
 }
 
@@ -82,14 +87,27 @@ extension DishesPresenter: DishesPresenterProtocol {
 
     func updateDishes() {
         state = .loading
-        networkService?.getDishes(completionHandler: { result in
-            switch result {
-            case let .success(dishes):
-                self.state = !dishes.isEmpty ? .data(dishes) : .noData
-                self.dishes = dishes
-            case let .failure(error):
-                self.state = .error(error)
+        let mainCourses = ["Chicken", "Meat", "Fish", "Side dish"]
+        var dishType = category.categoryName
+        dishType = mainCourses.contains { $0 == dishType }
+            ? "Main course"
+            : dishType
+
+        networkService?.getDishes(
+            dishType: dishType,
+            completionHandler: { result in
+                switch result {
+                case let .success(dishes):
+                    self.state = !dishes.isEmpty ? .data(dishes) : .noData
+                    self.dishes = dishes
+                case let .failure(error):
+                    self.state = .error(error)
+                }
             }
-        })
+        )
+    }
+
+    func fetchCategory() {
+        view?.updateCategory(category: category)
     }
 }

@@ -6,7 +6,7 @@ import Foundation
 /// Протокол NetworkServiceProtocol
 protocol NetworkServiceProtocol {
     /// Получение рецепта через JSON
-    func getDishes(completionHandler: @escaping (Result<[Dish], Error>) -> Void)
+    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], Error>) -> Void)
 //    /// Для получения детальной информации о рицепте
     func getDishesDetail(
         _ uri: String,
@@ -34,12 +34,18 @@ final class NetworkService: NetworkServiceProtocol {
     }
 
     private var session = URLSession.shared
-    private var component = URLComponents()
-    private let scheme = Constants.scheme
-    private let host = Constants.host
-    private let path = Constants.path
 
-    func createURLQueryItems(type: DishType) -> [URLQueryItem] {
+    private func createURLComponents(dishType: String, path: String) -> URLComponents {
+        var component = URLComponents()
+        component.scheme = Constants.scheme
+        component.host = Constants.host
+        component.queryItems = createURLQueryItems(dishType: dishType)
+        component.path = path
+
+        return component
+    }
+
+    private func createURLQueryItems(dishType: String) -> [URLQueryItem] {
         [
             URLQueryItem(
                 name: Constants.componentsTypeKey,
@@ -55,30 +61,16 @@ final class NetworkService: NetworkServiceProtocol {
             ),
             URLQueryItem(
                 name: Constants.componentsDishTypeKey,
-                value: type.dishCategory
+                value: dishType
             )
         ]
     }
 
-    func createURLComponents(type: DishType, path: String) {
-        component.scheme = scheme
-        component.host = host
-        component.queryItems = createURLQueryItems(type: type)
-        component.path = path
-    }
-
-    var urlQueryItems: [URLQueryItem] = [
-        .init(name: "type", value: "public"),
-        .init(name: "app_id", value: "a726fb9c"),
-        .init(name: "app_key", value: "2412c4c0d52ca924f6d6a486c1aa1ab6"),
-        .init(name: "dishType", value: DishType.salad.dishCategory)
-    ]
-
-    func getDishes(completionHandler: @escaping (Result<[Dish], Error>) -> Void) {
-        component.scheme = scheme
-        component.host = host
-        component.queryItems = urlQueryItems
-        component.path = path
+    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], Error>) -> Void) {
+        let component = createURLComponents(
+            dishType: dishType,
+            path: Constants.path
+        )
 
         guard let url = component.url else { return }
         let request = URLRequest(url: url)
@@ -110,8 +102,8 @@ final class NetworkService: NetworkServiceProtocol {
         let urlQueryItemsDetail: [URLQueryItem] = [
             .init(name: "uri", value: uri)
         ]
-        createURLComponents(
-            type: .salad,
+        var component = createURLComponents(
+            dishType: "Salad",
             path: Constants.pathWithUri
         )
         component.queryItems?.append(contentsOf: urlQueryItemsDetail)

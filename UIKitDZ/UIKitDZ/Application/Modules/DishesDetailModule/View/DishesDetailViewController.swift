@@ -42,6 +42,8 @@ final class DishesDetailViewController: UIViewController {
 
     // MARK: - Visual Components
 
+    private let refreshControl = UIRefreshControl()
+
     private let dishNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -110,6 +112,7 @@ final class DishesDetailViewController: UIViewController {
         setupNavigationBar()
         setupSubviews()
         configureTableViewConstraints()
+        setupRefreshControl()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -170,6 +173,24 @@ final class DishesDetailViewController: UIViewController {
             .map(\.value)
             .contains(where: { $0.dishName == dish.label })
     }
+
+    private func setupRefreshControl() {
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "Pull to refresh"
+        )
+        refreshControl.addTarget(
+            self,
+            action: #selector(refreshDishDetailData(_:)),
+            for: .valueChanged
+        )
+        tableView.refreshControl = refreshControl
+    }
+
+    @objc private func refreshDishDetailData(_ sender: UIRefreshControl) {
+        presenter?.fetchDishDetails()
+
+        sender.endRefreshing()
+    }
 }
 
 // MARK: - DishesDetailViewController + UITableViewDataSource
@@ -185,13 +206,6 @@ extension DishesDetailViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        switch presenter?.state {
-//        case .loading, .data:
-//            switch cellTypes[section] {
-//            case .dishImageItem, .dishRecipe, .nutrients:
-//                return 1
-//            }
-//        }
         1
     }
 
