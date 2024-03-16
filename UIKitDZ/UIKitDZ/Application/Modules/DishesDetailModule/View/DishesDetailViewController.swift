@@ -175,9 +175,6 @@ final class DishesDetailViewController: UIViewController {
     }
 
     private func setupRefreshControl() {
-        refreshControl.attributedTitle = NSAttributedString(
-            string: "Pull to refresh"
-        )
         refreshControl.addTarget(
             self,
             action: #selector(refreshDishDetailData(_:)),
@@ -234,6 +231,7 @@ extension DishesDetailViewController: UITableViewDataSource {
                 return cell
             }
         case let .data(dishDetails):
+            dishNameLabel.text = dishDetails.label
             let cellType = cellTypes[indexPath.section]
             switch cellType {
             case .dishImageItem:
@@ -263,12 +261,16 @@ extension DishesDetailViewController: UITableViewDataSource {
                 withIdentifier: NoDataTableViewCell.Constants.identifier,
                 for: indexPath
             ) as? NoDataTableViewCell else { return UITableViewCell() }
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
             return cell
         case .error, .none:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ErrorTableViewCell.Constants.identifier,
                 for: indexPath
             ) as? ErrorTableViewCell else { return UITableViewCell() }
+            tableView.allowsSelection = false
+            tableView.isScrollEnabled = false
             return cell
         }
     }
@@ -284,7 +286,7 @@ extension DishesDetailViewController: UITableViewDelegate {
         case .data:
             return UITableView.automaticDimension
         case .noData, .error, .none:
-            return 520
+            return UIScreen.main.bounds.height / 1.5
         }
     }
 

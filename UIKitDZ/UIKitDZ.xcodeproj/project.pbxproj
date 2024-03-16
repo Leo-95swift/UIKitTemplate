@@ -57,7 +57,6 @@
 		01C7A12A2BA21AB2006185DE /* DishType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1292BA21AB2006185DE /* DishType.swift */; };
 		01C7A12C2BA22480006185DE /* TotalNutrientsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A12B2BA22480006185DE /* TotalNutrientsDTO.swift */; };
 		01C7A12E2BA224D9006185DE /* TotalDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A12D2BA224D9006185DE /* TotalDTO.swift */; };
-		01C7A1302BA2F39E006185DE /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A12F2BA2F39E006185DE /* UIImageView+Extension.swift */; };
 		01C7A1322BA2F843006185DE /* DishDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1312BA2F843006185DE /* DishDetail.swift */; };
 		01C7A13A2BA33234006185DE /* DishHitsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A1392BA33234006185DE /* DishHitsDTO.swift */; };
 		01C7A13C2BA33270006185DE /* DishHitDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C7A13B2BA3326F006185DE /* DishHitDTO.swift */; };
@@ -166,7 +165,6 @@
 		01C7A1292BA21AB2006185DE /* DishType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishType.swift; sourceTree = "<group>"; };
 		01C7A12B2BA22480006185DE /* TotalNutrientsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalNutrientsDTO.swift; sourceTree = "<group>"; };
 		01C7A12D2BA224D9006185DE /* TotalDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalDTO.swift; sourceTree = "<group>"; };
-		01C7A12F2BA2F39E006185DE /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		01C7A1312BA2F843006185DE /* DishDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishDetail.swift; sourceTree = "<group>"; };
 		01C7A1392BA33234006185DE /* DishHitsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishHitsDTO.swift; sourceTree = "<group>"; };
 		01C7A13B2BA3326F006185DE /* DishHitDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DishHitDTO.swift; sourceTree = "<group>"; };
@@ -360,7 +358,6 @@
 				01C8DD722B9356D300356868 /* UIStackView+Extension.swift */,
 				8BB945942B96A1F3005B9CCB /* UIColor+Extension.swift */,
 				8BB945962B96A49F005B9CCB /* UIFont+Extension.swift */,
-				01C7A12F2BA2F39E006185DE /* UIImageView+Extension.swift */,
 				8B6560DF2BA3CF3E00B6B98F /* URLSession+Extension.swift */,
 			);
 			path = Extension;
@@ -993,7 +990,6 @@
 				01F4410E2B96FF8300010CEC /* Validation.swift in Sources */,
 				8BB9459D2B96BFEA005B9CCB /* ShimmerTableViewCell.swift in Sources */,
 				8BA9303A2B940ECE009351AC /* DishImageTableViewCell.swift in Sources */,
-				01C7A1302BA2F39E006185DE /* UIImageView+Extension.swift in Sources */,
 				8B6560E92BA407EA00B6B98F /* NutrientsShimmerTableViewCell.swift in Sources */,
 				8B04BFA82B8F0C1F005301C9 /* TermsOfUse.swift in Sources */,
 				01C7A10D2BA0CA93006185DE /* PancakeDishes.swift in Sources */,

@@ -263,9 +263,6 @@ final class DishesViewController: UIViewController {
     }
 
     private func setupRefreshControl() {
-        refreshControl.attributedTitle = NSAttributedString(
-            string: "Pull to refresh"
-        )
         refreshControl.addTarget(
             self,
             action: #selector(refreshDishesData(_:)),
@@ -595,12 +592,16 @@ extension DishesViewController: UITableViewDataSource {
                 withIdentifier: NoDataTableViewCell.Constants.identifier,
                 for: indexPath
             ) as? NoDataTableViewCell else { return UITableViewCell() }
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
             return cell
         case .error, .none:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ErrorTableViewCell.Constants.identifier,
                 for: indexPath
             ) as? ErrorTableViewCell else { return UITableViewCell() }
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
             return cell
         }
     }
@@ -619,9 +620,9 @@ extension DishesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch presenter?.state {
         case .loading, .data:
-            UITableView.automaticDimension
+            return UITableView.automaticDimension
         case .error, .noData, .none:
-            520
+            return UIScreen.main.bounds.height / 1.5
         }
     }
 }
