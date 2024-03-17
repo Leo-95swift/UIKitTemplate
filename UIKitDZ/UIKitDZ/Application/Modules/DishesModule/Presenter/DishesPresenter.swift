@@ -100,8 +100,8 @@ extension DishesPresenter: DishesPresenterProtocol {
                 case let .success(dishes):
                     self.state = !dishes.isEmpty ? .data(dishes) : .noData
                     self.dishes = dishes
-                case let .failure(error):
-                    self.state = .error(error)
+                case .failure(.invalidStatusCode), .failure(.networkFailure):
+                    self.state = .error
                 }
             }
         )

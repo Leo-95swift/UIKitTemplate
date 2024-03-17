@@ -6,11 +6,11 @@ import Foundation
 /// Протокол NetworkServiceProtocol
 protocol NetworkServiceProtocol {
     /// Получение рецепта через JSON
-    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], Error>) -> Void)
+    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], SessionError>) -> Void)
 //    /// Для получения детальной информации о рицепте
     func getDishesDetail(
         _ uri: String,
-        completionHandler: @escaping (Result<DishDetail, Error>) -> Void
+        completionHandler: @escaping (Result<DishDetail, SessionError>) -> Void
     )
 }
 
@@ -66,7 +66,7 @@ final class NetworkService: NetworkServiceProtocol {
         ]
     }
 
-    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], Error>) -> Void) {
+    func getDishes(dishType: String, completionHandler: @escaping (Result<[Dish], SessionError>) -> Void) {
         let component = createURLComponents(
             dishType: dishType,
             path: Constants.path
@@ -86,19 +86,19 @@ final class NetworkService: NetworkServiceProtocol {
                             recipes.append(Dish(dish: hit.recipe))
                         }
                         completionHandler(.success(recipes))
-                        print(recipes)
                     } catch {
-                        completionHandler(.failure(error))
-                        print(error.localizedDescription)
+                        completionHandler(.failure(.networkFailure))
                     }
-                case let .failure(error):
-                    completionHandler(.failure(error))
+                case .failure(.networkFailure):
+                    completionHandler(.failure(.networkFailure))
+                case .failure(.invalidStatusCode):
+                    completionHandler(.failure(.invalidStatusCode))
                 }
             }
         }.resume()
     }
 
-    func getDishesDetail(_ uri: String, completionHandler: @escaping (Result<DishDetail, Error>) -> Void) {
+    func getDishesDetail(_ uri: String, completionHandler: @escaping (Result<DishDetail, SessionError>) -> Void) {
         let urlQueryItemsDetail: [URLQueryItem] = [
             .init(name: "uri", value: uri)
         ]
@@ -121,10 +121,12 @@ final class NetworkService: NetworkServiceProtocol {
                         let detail = DishDetail(dto: recipe)
                         completionHandler(.success(detail))
                     } catch {
-                        completionHandler(.failure(error))
+                        completionHandler(.failure(.networkFailure))
                     }
-                case let .failure(error):
-                    completionHandler(.failure(error))
+                case .failure(.networkFailure):
+                    completionHandler(.failure(.networkFailure))
+                case .failure((.invalidStatusCode)):
+                    completionHandler(.failure(.invalidStatusCode))
                 }
             }
         }.resume()

@@ -12,5 +12,5 @@ public enum ViewState<Model> {
     /// Нет данных
     case noData
     /// Ошибка
-    case error(_ error: Error)
+    case error
 }

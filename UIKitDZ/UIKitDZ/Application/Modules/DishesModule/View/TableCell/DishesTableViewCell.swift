@@ -109,7 +109,6 @@ final class DishesTableViewCell: UITableViewCell {
                 with: info.dishImageName,
                 imageID: info.dishName
             )
-            self.dishImageView.getImage(from: info.dishImageName)
             self.dishNameLabel.text = info.dishName
             self.timerNumberLabel.text = self.roundAndConvertToString(
                 info.cookTime

@@ -58,8 +58,8 @@ extension DishesDetailPresenter: DishesDetailPresenterProtocol {
                 switch result {
                 case let .success(dishDetails):
                     self.state = .data(dishDetails)
-                case let .failure(error):
-                    self.state = .error(error)
+                case .failure(.invalidStatusCode), .failure(.networkFailure):
+                    self.state = .error
                 }
             }
         })
