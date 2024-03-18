@@ -113,6 +113,7 @@
 		8BD1F8E02B90300A0053F19B /* BonusInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD1F8DF2B90300A0053F19B /* BonusInfo.swift */; };
 		8BD1F8E22B9030200053F19B /* BonusStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD1F8E12B9030200053F19B /* BonusStorage.swift */; };
 		8BD1F8E52B9041220053F19B /* TypealisHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD1F8E42B9041220053F19B /* TypealisHandler.swift */; };
+		92FE349E16DDA90CEAF359F3 /* Pods_UIKitDZ.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CA6A41C9F45D48214872995 /* Pods_UIKitDZ.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -191,6 +192,8 @@
 		01E77D312B97543C009BAE81 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		01F4410A2B96FF4B00010CEC /* ValidationStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationStorage.swift; sourceTree = "<group>"; };
 		01F4410D2B96FF8300010CEC /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
+		2CA6A41C9F45D48214872995 /* Pods_UIKitDZ.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UIKitDZ.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		67333C3CFCD7602EF98996B9 /* Pods-UIKitDZ.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UIKitDZ.debug.xcconfig"; path = "Target Support Files/Pods-UIKitDZ/Pods-UIKitDZ.debug.xcconfig"; sourceTree = "<group>"; };
 		8B04BF922B8E0DD1005301C9 /* UserInfoTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoTableCell.swift; sourceTree = "<group>"; };
 		8B04BF952B8E0E17005301C9 /* ProfileCellType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCellType.swift; sourceTree = "<group>"; };
 		8B04BF982B8E111E005301C9 /* ProfileStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStorage.swift; sourceTree = "<group>"; };
@@ -225,6 +228,7 @@
 		8BD1F8DF2B90300A0053F19B /* BonusInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusInfo.swift; sourceTree = "<group>"; };
 		8BD1F8E12B9030200053F19B /* BonusStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BonusStorage.swift; sourceTree = "<group>"; };
 		8BD1F8E42B9041220053F19B /* TypealisHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypealisHandler.swift; sourceTree = "<group>"; };
+		C9CE6364938C9ED631316528 /* Pods-UIKitDZ.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UIKitDZ.release.xcconfig"; path = "Target Support Files/Pods-UIKitDZ/Pods-UIKitDZ.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +236,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92FE349E16DDA90CEAF359F3 /* Pods_UIKitDZ.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,6 +519,8 @@
 			children = (
 				0137AFC72B773DF10050C230 /* UIKitDZ */,
 				0137AFC62B773DF10050C230 /* Products */,
+				E93DEA870A7CE41ED8A38558 /* Pods */,
+				D1FB8553737F17EF8D4700E5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -811,6 +818,23 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		D1FB8553737F17EF8D4700E5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2CA6A41C9F45D48214872995 /* Pods_UIKitDZ.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E93DEA870A7CE41ED8A38558 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				67333C3CFCD7602EF98996B9 /* Pods-UIKitDZ.debug.xcconfig */,
+				C9CE6364938C9ED631316528 /* Pods-UIKitDZ.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -818,11 +842,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0137AFD92B773DF20050C230 /* Build configuration list for PBXNativeTarget "UIKitDZ" */;
 			buildPhases = (
+				F021E8595054B398BF06D84A /* [CP] Check Pods Manifest.lock */,
 				0137AFC12B773DF10050C230 /* Sources */,
 				0137AFC22B773DF10050C230 /* Frameworks */,
 				0137AFC32B773DF10050C230 /* Resources */,
 				0137AFDD2B7742670050C230 /* Swift Format */,
 				8B3D68D12B90608D004B20A9 /* Swift Lint */,
+				640E3653202B08BA89F7C39D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -900,6 +926,23 @@
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftformat >/dev/null; then\n  swiftformat .\nelse\n  echo \"warning: SwiftFormat not installed, download from https://github.com/nicklockwood/SwiftFormat\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		640E3653202B08BA89F7C39D /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-UIKitDZ/Pods-UIKitDZ-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-UIKitDZ/Pods-UIKitDZ-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UIKitDZ/Pods-UIKitDZ-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		8B3D68D12B90608D004B20A9 /* Swift Lint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -918,6 +961,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F021E8595054B398BF06D84A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-UIKitDZ-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1168,13 +1233,14 @@
 		};
 		0137AFDA2B773DF20050C230 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 67333C3CFCD7602EF98996B9 /* Pods-UIKitDZ.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UIKitDZ/UIKitDZ.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 87N59T8DFY;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UIKitDZ/SupportingFiles/Info.plist;
@@ -1197,13 +1263,14 @@
 		};
 		0137AFDB2B773DF20050C230 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C9CE6364938C9ED631316528 /* Pods-UIKitDZ.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = UIKitDZ/UIKitDZ.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 87N59T8DFY;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UIKitDZ/SupportingFiles/Info.plist;

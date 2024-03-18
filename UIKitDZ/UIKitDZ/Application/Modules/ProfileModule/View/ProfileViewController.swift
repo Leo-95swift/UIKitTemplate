@@ -218,7 +218,6 @@ final class ProfileViewController: UIViewController {
             let updatedUserData = UserData(
                 userName: name,
                 login: userData.login,
-                password: userData.password,
                 imageName: imageName
             )
             do {
