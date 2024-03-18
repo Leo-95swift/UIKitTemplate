@@ -118,20 +118,20 @@ final class NutrientsTableViewCell: UITableViewCell {
 
     func configure(data: DishDetail) {
         enercKalCountLabel.text = makeNutrientLabelText(
-            count: data.totalNutrients.calories.quantity,
-            type: data.totalNutrients.calories.unit
+            count: Double(data.calories),
+            type: "kcal"
         )
         carhbohydratesCountLabel.text = makeNutrientLabelText(
-            count: data.totalNutrients.chocdf.quantity,
-            type: data.totalNutrients.chocdf.unit
+            count: data.chocdf,
+            type: "g"
         )
         fatsCountLabel.text = makeNutrientLabelText(
-            count: data.totalNutrients.fat.quantity,
-            type: data.totalNutrients.fat.unit
+            count: data.fats,
+            type: "g"
         )
         proteinsCountLabel.text = makeNutrientLabelText(
-            count: data.totalNutrients.protein.quantity,
-            type: data.totalNutrients.protein.unit
+            count: data.proteins,
+            type: "g"
         )
     }
 

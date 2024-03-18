@@ -35,4 +35,19 @@ class Dish {
         recipe = "recipe"
         uri = dish.uri
     }
+
+    init(CDdish: CoreDataDish) {
+        dishName = CDdish.dishName
+        dishImageName = CDdish.dishImageName
+        cookTime = CDdish.cookTime
+        totalWeight = CDdish.totalWeight
+        uri = CDdish.uri
+        nutrients = Nutrients(
+            enercKcal: "enercKcal",
+            carbohydrates: "carbohydrates",
+            fats: "fats",
+            proteins: "proteins"
+        )
+        recipe = "recipe"
+    }
 }

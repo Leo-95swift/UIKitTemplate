@@ -613,8 +613,10 @@ extension DishesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let dishesDetailUri = presenter?.dishes[indexPath.row].uri else { return }
-        presenter?.passUriToDishDetail(uri: dishesDetailUri)
+        guard let dishesDetailUri = presenter?.dishes[indexPath.row].uri,
+              let dishName = presenter?.dishes[indexPath.row].dishName
+        else { return }
+        presenter?.passDataToDishesDetail(data: (dishesDetailUri, dishName))
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
