@@ -38,7 +38,6 @@ final class DishImageTableViewCell: UITableViewCell {
         let view = UIView()
         view.layer.cornerRadius = 46
         view.clipsToBounds = true
-        view.backgroundColor = .yellow
         return view
     }()
 
@@ -46,7 +45,6 @@ final class DishImageTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 0
         imageView.contentMode = .scaleAspectFill
-        imageView.image = UIImage(named: "dish6")
         return imageView
     }()
 
@@ -135,10 +133,26 @@ final class DishImageTableViewCell: UITableViewCell {
 
     // MARK: - Public Methods
 
-    func configure(data: Dish) {
-        dishImageView.image = UIImage(named: data.dishImageName)
-        totalWeightLabel.text = data.totalWeight
-        cookingTimeMinutesLabel.text = data.cookTime
+    func configure(data: DishDetail) {
+        loadImage(with: data.images, imageID: data.label)
+        totalWeightLabel.text = roundAndConvertToString(data.totalWeight) + " g"
+        cookingTimeMinutesLabel.text = "\(data.totalTime) min"
+    }
+
+    private func loadImage(with stringURL: String, imageID: String) {
+        let imageService = LoadImageService()
+        let proxy = Proxy(service: imageService)
+
+        guard let url = URL(string: stringURL) else { return }
+        proxy.loadImage(url: url, imageId: imageID) { [weak self] data, _, _ in
+            guard let self = self,
+                  let data = data
+            else { return }
+
+            DispatchQueue.main.async {
+                self.dishImageView.image = UIImage(data: data)
+            }
+        }
     }
 
     // MARK: - Private Methods
@@ -166,6 +180,12 @@ final class DishImageTableViewCell: UITableViewCell {
             cookingTimeImageView,
             cookingLabelsStackView
         ])
+    }
+
+    private func roundAndConvertToString(_ value: Double) -> String {
+        let roundedValue = value.rounded()
+        let stringValue = String(Int(roundedValue))
+        return stringValue
     }
 
     private func configureConstraints() {

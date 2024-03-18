@@ -1,6 +1,7 @@
 // AuthViewController.swift
 // Copyright © RoadMap. All rights reserved.
 
+import KeychainSwift
 import UIKit
 
 /// Стартовый вью контроллер
@@ -51,6 +52,8 @@ final class AuthViewController: UIViewController {
             static let passwordErrorLabel = "You entered the wrong password"
             static let loginButton = "Login"
             static let warningLabel = "Please check the accuracy of the\nentered credentials."
+            static let loginKey = "LoginKey"
+            static let passwordKey = "PasswordKey"
         }
     }
 
@@ -336,22 +339,21 @@ final class AuthViewController: UIViewController {
               let password = passwordTextField.text
         else { return }
 
-        if let existingCredentials = caretaker.loadUserData(for: email) {
-            guard email == existingCredentials.login, password == existingCredentials.password else {
-                checkCredentials(isValid: false)
-                return
-            }
+        let keychain = KeychainSwift()
+        if email == keychain.get("\(email) - email"), password == keychain.get("\(password) - password") {
+            checkCredentials(isValid: true)
         } else {
+            keychain.set(email, forKey: "\(email) - email")
+            keychain.set(password, forKey: "\(password) - password")
             let newUserData = UserData(
                 userName: nil,
                 login: email,
-                password: password,
                 imageName: nil
             )
             do {
                 try caretaker.saveUserData(newUserData, key: email)
             } catch {
-                print("jnjnjn")
+                print("Не получилось добавить новые данные")
             }
         }
         Login.login = email

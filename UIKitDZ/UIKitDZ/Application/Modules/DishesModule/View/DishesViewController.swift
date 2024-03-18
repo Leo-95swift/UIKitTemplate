@@ -5,14 +5,14 @@ import UIKit
 
 /// Интерфейс взаимодействия с view
 protocol DishesViewControllerProtocol: AnyObject {
-    /// Обновляет состояние у кнопок сортировки
-    func updateState(sender: CustomControlView)
+    /// Обновляет вью в зависимости от состояния
+    func updateState()
     /// Обновляет UI  у кнопки сортировки по калориям
     func updateCaloriesView()
     /// Обновляет UI  у кнопки сортировки по времени
     func updateTimeView()
-    /// Получает данные показа деталей категории
-    func getCategory(_ category: Category)
+    /// Обновляет название категории
+    func updateCategory(category: Category)
 }
 
 /// Экран для показа блюд
@@ -63,6 +63,8 @@ final class DishesViewController: UIViewController {
 
     // MARK: - Visual Components
 
+    private let refreshControl = UIRefreshControl()
+
     private let recipesSearchBar: UISearchBar = {
         let searchTextField = UISearchTextField()
         let searchBar = UISearchBar()
@@ -99,6 +101,8 @@ final class DishesViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(DishesTableViewCell.self, forCellReuseIdentifier: DishesTableViewCell.Constants.identifier)
         tableView.register(ShimmerTableViewCell.self, forCellReuseIdentifier: ShimmerTableViewCell.Constants.identifier)
+        tableView.register(ErrorTableViewCell.self, forCellReuseIdentifier: ErrorTableViewCell.Constants.identifier)
+        tableView.register(NoDataTableViewCell.self, forCellReuseIdentifier: NoDataTableViewCell.Constants.identifier)
         tableView.allowsSelection = true
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
@@ -111,6 +115,8 @@ final class DishesViewController: UIViewController {
 
     var presenter: DishesPresenterProtocol?
     var fileManagerService: FileManagerService?
+    var dishDetail: DishDetail?
+    var dishes: [Dish] = []
 
     // MARK: - Private Properties
 
@@ -126,9 +132,8 @@ final class DishesViewController: UIViewController {
         }
     }
 
-    private var infoState: InfoStates = .loading
     private var category: Category?
-    private var dishes: [Dish]?
+    private var dishesUri: String?
     private var filteredByTimeDishes: [Dish] = []
     private var filteredByColoriesDishes: [Dish] = []
     private var isFilteredByTyme = false
@@ -138,18 +143,20 @@ final class DishesViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presenter?.fetchCategory()
-        setupNavigationBar()
         setupSubviews()
         configureSubviews()
+        presenter?.fetchCategory()
         setupColoriesSortingItem()
         setupTimeSortingItem()
         setupSortingItemsAction()
+        setupRefreshControl()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        presenter?.fetchCategory()
+        presenter?.updateDishes()
+        setupNavigationBar()
         fileManagerService?.sendInfoToDirectory(
             txtFileName: Constants.Texts.txt,
             content: makeContent(
@@ -159,28 +166,9 @@ final class DishesViewController: UIViewController {
         )
     }
 
-    private func makeContent(
-        from startContent: String,
-        category: Category?
-    ) -> String {
-        let resultCategoryName = category
-            .flatMap { categoriesMap[$0.categoryName] } ?? ""
-        let result = startContent + (
-            resultCategoryName.isEmpty
-                ? ""
-                : " \(resultCategoryName)"
-        )
-
-        return result
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableView.reloadData()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.infoState = .loaded
-            self.tableView.reloadData()
-        }
     }
 
     // MARK: - Private Methodes
@@ -246,7 +234,7 @@ final class DishesViewController: UIViewController {
             customView: customView
         )
         navigationItem.leftBarButtonItem = customBarButtonItem
-        recipesSearchBar.delegate = self
+//        recipesSearchBar.delegate = self
     }
 
     private func setupSubviews() {
@@ -272,6 +260,30 @@ final class DishesViewController: UIViewController {
         configureTableViewConstraints()
         configureNoDishesStackViewConstraints()
         configureSearchBarConstraints()
+    }
+
+    private func setupRefreshControl() {
+        refreshControl.addTarget(
+            self,
+            action: #selector(refreshDishesData(_:)),
+            for: .valueChanged
+        )
+        tableView.refreshControl = refreshControl
+    }
+
+    private func makeContent(
+        from startContent: String,
+        category: Category?
+    ) -> String {
+        let resultCategoryName = category
+            .flatMap { categoriesMap[$0.categoryName] } ?? ""
+        let result = startContent + (
+            resultCategoryName.isEmpty
+                ? ""
+                : " \(resultCategoryName)"
+        )
+
+        return result
     }
 
     private func setupSortingItemsAction() {
@@ -507,6 +519,12 @@ final class DishesViewController: UIViewController {
     @objc private func updateTimeControlUI() {
         presenter?.updateTimeControlUI()
     }
+
+    @objc private func refreshDishesData(_ sender: UIRefreshControl) {
+        presenter?.updateDishes()
+
+        sender.endRefreshing()
+    }
 }
 
 /// Расширили класс, добавив функции для удобной инициализации одинаковых UI элементов
@@ -541,11 +559,18 @@ extension DishesViewController {
 
 extension DishesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dishes?.count ?? 1
+        switch presenter?.state {
+        case .loading:
+            8
+        case let .data(dishes):
+            dishes.count
+        case .noData, .error, .none:
+            1
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch infoState {
+        switch presenter?.state {
         case .loading:
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: ShimmerTableViewCell.Constants.identifier,
@@ -554,20 +579,29 @@ extension DishesViewController: UITableViewDataSource {
             cell.selectionStyle = .none
             return cell
 
-        case .loaded:
+        case let .data(dishes):
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: DishesTableViewCell.Constants.identifier,
                 for: indexPath
             ) as? DishesTableViewCell else { return UITableViewCell() }
             cell.selectionStyle = .none
-
-            if let data = dishes {
-                cell.configureCell(info: data[indexPath.row])
-            } else if let data = category?.dishes {
-                cell.configureCell(info: data[indexPath.row])
-            } else {
-                return UITableViewCell()
-            }
+            cell.configureCell(info: dishes[indexPath.row])
+            return cell
+        case .noData:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: NoDataTableViewCell.Constants.identifier,
+                for: indexPath
+            ) as? NoDataTableViewCell else { return UITableViewCell() }
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
+            return cell
+        case .error, .none:
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: ErrorTableViewCell.Constants.identifier,
+                for: indexPath
+            ) as? ErrorTableViewCell else { return UITableViewCell() }
+            tableView.isScrollEnabled = false
+            tableView.allowsSelection = false
             return cell
         }
     }
@@ -578,17 +612,28 @@ extension DishesViewController: UITableViewDataSource {
 extension DishesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let dishes = category?.dishes else { return }
-        presenter?.moveToDishesDetail(data: dishes[indexPath.row])
+
+        guard let dishesDetailUri = presenter?.dishes[indexPath.row].uri,
+              let dishName = presenter?.dishes[indexPath.row].dishName
+        else { return }
+        presenter?.passDataToDishesDetail(data: (dishesDetailUri, dishName))
+    }
+
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        switch presenter?.state {
+        case .loading, .data:
+            return UITableView.automaticDimension
+        case .error, .noData, .none:
+            return UIScreen.main.bounds.height / 1.5
+        }
     }
 }
 
 // MARK: - DishesViewController + DishesViewControllerProtocol
 
 extension DishesViewController: DishesViewControllerProtocol {
-    func getCategory(_ category: Category) {
-        self.category = category
-        dishes = category.dishes
+    func updateState() {
+        tableView.reloadData()
     }
 
     func updateState(sender: CustomControlView) {
@@ -617,28 +662,28 @@ extension DishesViewController: DishesViewControllerProtocol {
         setupTime(for: timeControlCurrentState)
         switch timeControlCurrentState {
         case .none:
-            guard let category = category else { return }
-            dishes = category.dishes
+            // guard let category = category else { return }
+            // dishes = category.dishes
             isFilteredByTyme = false
             tableView.reloadData()
         case .lowToHigh:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByColories {
                 dishes = filteredByColoriesDishes.sorted { $0.cookTime < $1.cookTime }
             } else {
-                dishes = category.dishes.sorted { $0.cookTime < $1.cookTime }
+                // dishes = category.dishes.sorted { $0.cookTime < $1.cookTime }
             }
-            filteredByTimeDishes = dishes ?? []
+            filteredByTimeDishes = dishes
             tableView.reloadData()
             isFilteredByTyme = true
         case .highToLow:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByColories {
                 dishes = filteredByColoriesDishes.sorted { $0.cookTime < $1.cookTime }
             } else {
-                dishes = category.dishes.sorted { $0.cookTime > $1.cookTime }
+                //  dishes = category.dishes.sorted { $0.cookTime > $1.cookTime }
             }
-            filteredByTimeDishes = dishes ?? []
+            filteredByTimeDishes = dishes
             isFilteredByTyme = true
             tableView.reloadData()
         }
@@ -651,49 +696,56 @@ extension DishesViewController: DishesViewControllerProtocol {
             isFilteredByColories = false
             tableView.reloadData()
         case .lowToHigh:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByTyme {
                 dishes = filteredByTimeDishes.sorted { $0.totalWeight < $1.totalWeight }
             } else {
-                dishes = category.dishes.sorted { $0.totalWeight < $1.totalWeight }
+                //  dishes = category.dishes.sorted { $0.totalWeight < $1.totalWeight }
             }
-            filteredByColoriesDishes = dishes ?? []
+            filteredByColoriesDishes = dishes
             isFilteredByColories = true
             tableView.reloadData()
         case .highToLow:
-            guard let category = category else { return }
+            // guard let category = category else { return }
             if isFilteredByTyme {
                 dishes = filteredByTimeDishes.sorted { $0.totalWeight < $1.totalWeight }
             } else {
-                dishes = category.dishes.sorted { $0.totalWeight > $1.totalWeight }
+                // dishes = category.dishes.sorted { $0.totalWeight > $1.totalWeight }
             }
-            filteredByColoriesDishes = dishes ?? []
+            filteredByColoriesDishes = dishes
             isFilteredByColories = true
             tableView.reloadData()
         }
     }
-}
 
-// MARK: - DishesViewController + UISearchBarDelegate
-
-extension DishesViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        presenter?.fetchCategory()
-
-        switch searchText.count {
-        case 0:
-            noDishesStackView.isHidden = true
-            tableView.reloadData()
-        case 1, 2:
-            break
-        default:
-            dishes = dishes?.filter { $0.dishName.contains(searchText) }
-            if let isEmpty = dishes?.isEmpty {
-                tableView.isHidden = isEmpty
-                noDishesStackView.isHidden = !isEmpty
-            }
-            tableView.reloadData()
-        }
-        tableView.reloadData()
+    func updateCategory(category: Category) {
+        self.category = category
     }
 }
+
+/*
+ // MARK: - DishesViewController + UISearchBarDelegate
+
+ extension DishesViewController: UISearchBarDelegate {
+     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+         presenter?.fetchDishes()
+
+         switch searchText.count {
+         case 0:
+             noDishesStackView.isHidden = true
+             tableView.reloadData()
+         case 1, 2:
+             break
+         default:
+             dishes = dishes?.filter { $0.dishName.contains(searchText) }
+             if let isEmpty = dishes?.isEmpty {
+                 tableView.isHidden = isEmpty
+                 noDishesStackView.isHidden = !isEmpty
+             }
+             tableView.reloadData()
+         }
+         tableView.reloadData()
+     }
+ }
+
+ */

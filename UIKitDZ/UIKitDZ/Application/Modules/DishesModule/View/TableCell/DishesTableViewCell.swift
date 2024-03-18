@@ -96,13 +96,43 @@ final class DishesTableViewCell: UITableViewCell {
         setupSubviews()
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        dishImageView.image = nil
+    }
+
     // MARK: - Public Methods
 
     func configureCell(info: Dish) {
-        dishImageView.image = UIImage(named: info.dishImageName)
-        dishNameLabel.text = info.dishName
-        timerNumberLabel.text = info.cookTime
-        caloriesCountLabel.text = info.totalWeight
+        DispatchQueue.main.async {
+            self.loadImage(
+                with: info.dishImageName,
+                imageID: info.dishName
+            )
+            self.dishNameLabel.text = info.dishName
+            self.timerNumberLabel.text = self.roundAndConvertToString(
+                info.cookTime
+            ) + " min"
+            self.caloriesCountLabel.text = self.roundAndConvertToString(
+                info.totalWeight
+            ) + " kkal"
+        }
+    }
+
+    private func loadImage(with stringURL: String, imageID: String) {
+        let imageService = LoadImageService()
+        let proxy = Proxy(service: imageService)
+
+        guard let url = URL(string: stringURL) else { return }
+        proxy.loadImage(url: url, imageId: imageID) { [weak self] data, _, _ in
+            guard let self = self,
+                  let data = data
+            else { return }
+
+            DispatchQueue.main.async {
+                self.dishImageView.image = UIImage(data: data)
+            }
+        }
     }
 
     // MARK: - Private Methodes
@@ -129,6 +159,12 @@ final class DishesTableViewCell: UITableViewCell {
         setupCaloriesImageViewConstraints()
         setupCaloriesCountLabelConstraints()
         setupArrowImageView()
+    }
+
+    private func roundAndConvertToString(_ value: Double) -> String {
+        let roundedValue = value.rounded()
+        let stringValue = String(Int(roundedValue))
+        return stringValue
     }
 
     private func setupContainerViewConstraints() {

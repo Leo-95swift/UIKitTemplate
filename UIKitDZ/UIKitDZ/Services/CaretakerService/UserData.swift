@@ -7,8 +7,6 @@ struct UserData: Codable, Equatable {
     let userName: String?
     // логин пользователя
     let login: String
-    // пароль пользователя
-    let password: String
     // Название картинки пользователя
     let imageName: String?
 }

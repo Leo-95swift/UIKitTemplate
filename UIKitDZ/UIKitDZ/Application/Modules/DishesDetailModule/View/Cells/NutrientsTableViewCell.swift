@@ -116,11 +116,31 @@ final class NutrientsTableViewCell: UITableViewCell {
 
     // MARK: - Public Methods
 
-    func configure(data: Dish) {
-        enercKalCountLabel.text = data.nutrients.enercKcal
-        carhbohydratesCountLabel.text = data.nutrients.carbohydrates
-        fatsCountLabel.text = data.nutrients.fats
-        proteinsCountLabel.text = data.nutrients.proteins
+    func configure(data: DishDetail) {
+        enercKalCountLabel.text = makeNutrientLabelText(
+            count: Double(data.calories),
+            type: "kcal"
+        )
+        carhbohydratesCountLabel.text = makeNutrientLabelText(
+            count: data.chocdf,
+            type: "g"
+        )
+        fatsCountLabel.text = makeNutrientLabelText(
+            count: data.fats,
+            type: "g"
+        )
+        proteinsCountLabel.text = makeNutrientLabelText(
+            count: data.proteins,
+            type: "g"
+        )
+    }
+
+    private func makeNutrientLabelText(count: Double, type: String) -> String {
+        let roundedCount = count.rounded()
+        let stringCount = String(Int(roundedCount))
+        let result = stringCount + " " + type
+
+        return result
     }
 
     // MARK: - Private Methods

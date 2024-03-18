@@ -5,8 +5,10 @@ import Foundation
 
 /// Протокол для общения с DishesDetailPresenter
 protocol DishesDetailPresenterProtocol {
+    /// Состояние загрузки данных
+    var state: ViewState<DishDetail> { get }
     /// просит презентера получить данные о блюде
-    func fetchDish()
+    func fetchDishDetails()
     /// Просит презентера вернуться на экран с категориями рецептов
     func moveToDishes()
     /// Просит презентера показать алерт
@@ -23,26 +25,53 @@ final class DishesDetailPresenter {
 
     private weak var view: DishesDetailViewControllerProtocol?
     private weak var recipesCoordinator: RecipesCoordinator?
-    private var data: Dish
+    private let networkService: NetworkServiceProtocol?
+    private var uri: String
+    private var dishName: String
+    var state: ViewState<DishDetail> = .loading {
+        didSet {
+            view?.updateState()
+        }
+    }
 
     // MARK: - Initializers
 
     init(
         view: DishesDetailViewControllerProtocol,
         coordinator: RecipesCoordinator,
-        data: Dish
+        networkService: NetworkServiceProtocol,
+        data: (String, String)
     ) {
         self.view = view
         recipesCoordinator = coordinator
-        self.data = data
+        self.networkService = networkService
+        uri = data.0
+        dishName = data.1
     }
 }
 
 // MARK: - DishesDetailPresenter + DishesDetailPresenterProtocol
 
 extension DishesDetailPresenter: DishesDetailPresenterProtocol {
-    func fetchDish() {
-        view?.updateData(data)
+    func fetchDishDetails() {
+        state = .loading
+        let coreDataSavedDishDetail = CoreDataService.shared.fetchDishDetail(by: dishName)
+        if coreDataSavedDishDetail == nil {
+            networkService?.getDishesDetail(uri, completionHandler: { result in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    switch result {
+                    case let .success(dishDetails):
+                        self.state = .data(dishDetails)
+                        CoreDataService.shared.create(dishDetail: dishDetails)
+                    case .failure(.invalidStatusCode), .failure(.networkFailure):
+                        self.state = .error
+                    }
+                }
+            })
+        } else {
+            guard let dishDetail = coreDataSavedDishDetail else { return }
+            state = .data(dishDetail)
+        }
     }
 
     func moveToDishes() {
@@ -58,9 +87,9 @@ extension DishesDetailPresenter: DishesDetailPresenterProtocol {
     }
 
     func updateStateForDish(_ dish: Dish) {
-        FavoritesDataManager.shared.updateStateForDish(
-            dish.dishName,
-            dish: dish
-        )
+//        FavoritesDataManager.shared.updateStateForDish(
+//            dish.dishName,
+//            dish: dish
+//        )
     }
 }
