@@ -27,6 +27,7 @@ final class DishesDetailPresenter {
     private weak var recipesCoordinator: RecipesCoordinator?
     private let networkService: NetworkServiceProtocol?
     private var uri: String
+    private var dishName: String
     var state: ViewState<DishDetail> = .loading {
         didSet {
             view?.updateState()
@@ -39,12 +40,13 @@ final class DishesDetailPresenter {
         view: DishesDetailViewControllerProtocol,
         coordinator: RecipesCoordinator,
         networkService: NetworkServiceProtocol,
-        uri: String
+        data: (String, String)
     ) {
         self.view = view
         recipesCoordinator = coordinator
         self.networkService = networkService
-        self.uri = uri
+        uri = data.0
+        dishName = data.1
     }
 }
 
@@ -53,16 +55,23 @@ final class DishesDetailPresenter {
 extension DishesDetailPresenter: DishesDetailPresenterProtocol {
     func fetchDishDetails() {
         state = .loading
-        networkService?.getDishesDetail(uri, completionHandler: { result in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                switch result {
-                case let .success(dishDetails):
-                    self.state = .data(dishDetails)
-                case .failure(.invalidStatusCode), .failure(.networkFailure):
-                    self.state = .error
+        let coreDataSavedDishDetail = CoreDataService.shared.fetchDishDetail(by: dishName)
+        if coreDataSavedDishDetail == nil {
+            networkService?.getDishesDetail(uri, completionHandler: { result in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    switch result {
+                    case let .success(dishDetails):
+                        self.state = .data(dishDetails)
+                        CoreDataService.shared.create(dishDetail: dishDetails)
+                    case .failure(.invalidStatusCode), .failure(.networkFailure):
+                        self.state = .error
+                    }
                 }
-            }
-        })
+            })
+        } else {
+            guard let dishDetail = coreDataSavedDishDetail else { return }
+            state = .data(dishDetail)
+        }
     }
 
     func moveToDishes() {

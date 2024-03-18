@@ -71,10 +71,10 @@ final class DetailRecipeTableViewCell: UITableViewCell {
     // MARK: - Public Methods
 
     func configure(data: DishDetail) {
-        var recipeText = ""
-        for ingridientLine in data.ingridientLines {
-            recipeText += ingridientLine
-        }
+        var recipeText = data.ingridientLines
+//        for ingridientLine in data.ingridientLines {
+//            recipeText += ingridientLine
+//        }
         recipeLabel.text = recipeText
     }
 

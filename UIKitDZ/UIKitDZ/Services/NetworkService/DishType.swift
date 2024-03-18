@@ -4,7 +4,7 @@
 import Foundation
 
 /// Перечисление, для типов блюд.
-enum DishType {
+enum DishType: String {
     case salad, soup, chicken, meat, fish, sideDish, pancake, drinks, desserts
 
     var dishCategory: String {

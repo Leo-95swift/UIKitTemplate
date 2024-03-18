@@ -18,9 +18,9 @@ protocol DishesPresenterProtocol {
     /// Просит презентера вернуться на экран с категориями рецептов
     func moveToRecipes()
     /// Просит презентера перейти на экран деталей про блюдо
-    func moveToDishesDetail(uri: String)
+    func moveToDishesDetail(data: (String, String))
     /// Просит презентера получить данные о конкретном блюде
-    func passUriToDishDetail(uri: String)
+    func passDataToDishesDetail(data: (String, String))
     /// Просит презентера получить данные о блюдах с сервера
     func updateDishes()
     /// Просит презентера получить данные о названии категории
@@ -77,12 +77,12 @@ extension DishesPresenter: DishesPresenterProtocol {
         recipesCoordinator?.returnToRecipes()
     }
 
-    func moveToDishesDetail(uri: String) {
-        recipesCoordinator?.pushDishesDetailView(uri: uri)
+    func moveToDishesDetail(data: (String, String)) {
+        recipesCoordinator?.pushDishesDetailView(data: data)
     }
 
-    func passUriToDishDetail(uri: String) {
-        moveToDishesDetail(uri: uri)
+    func passDataToDishesDetail(data: (String, String)) {
+        moveToDishesDetail(data: data)
     }
 
     func updateDishes() {
@@ -92,19 +92,25 @@ extension DishesPresenter: DishesPresenterProtocol {
         dishType = mainCourses.contains { $0 == dishType }
             ? "Main course"
             : dishType
-
-        networkService?.getDishes(
-            dishType: dishType,
-            completionHandler: { result in
-                switch result {
-                case let .success(dishes):
-                    self.state = !dishes.isEmpty ? .data(dishes) : .noData
-                    self.dishes = dishes
-                case .failure(.invalidStatusCode), .failure(.networkFailure):
-                    self.state = .error
+        let coreDataSavedDishes = CoreDataService.shared.fetchDishes(by: dishType)
+        if coreDataSavedDishes.isEmpty {
+            networkService?.getDishes(
+                dishType: dishType,
+                completionHandler: { result in
+                    switch result {
+                    case let .success(dishes):
+                        self.state = !dishes.isEmpty ? .data(dishes) : .noData
+                        CoreDataService.shared.create(dishes: dishes, by: dishType)
+                        self.dishes = dishes
+                    case .failure(.invalidStatusCode), .failure(.networkFailure):
+                        self.state = .error
+                    }
                 }
-            }
-        )
+            )
+        } else {
+            dishes = coreDataSavedDishes
+            state = .data(dishes)
+        }
     }
 
     func fetchCategory() {
